@@ -41,6 +41,35 @@ paths:
                   identifier:
                     type: string
                     example: "abcdef012345"
+    get:
+      tags: ["Operations"]
+      summary: Get users 
+      description: |
+        If a username is passed, it retrieves all users that match the username,
+        otherwise retrieve all users.
+      operationId: getUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: username
+          in: query
+          schema: 
+            type: string
+          required: false
+      responses:
+        '200':
+          description: |
+            Obtain the list of the user. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string 
   /session/{id}:
     parameters:
     - name: id
@@ -55,6 +84,7 @@ paths:
       description: |
         Lets user to change their username with another one.
         If the username isn't free, an error will return.
+      operationId: setMyUserName
       security:
         - bearerAuth: []
       requestBody:
@@ -83,6 +113,7 @@ paths:
       summary: Upload a new photo
       description: |
         Lets user to upload a new photo in their profile.
+      operationId: uploadPhoto
       security:
         - bearerAuth: []
       requestBody:
@@ -96,6 +127,89 @@ paths:
         '200':
           description: |
             File uploaded successfully.
+  /session/profile:
+    parameters:
+      - name: idUser
+        in: query
+        schema:
+          type: string
+        required: true
+        description: username's identifier
+    get:
+      tags: ["Social operations"]
+      summary: Retrive a user's profile
+      description: |
+        Returns the profile of the user passed as input in the path.
+      operationId: getUserProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: |
+            Profile returned successfully.
+          content:
+            application/json:
+              schema:
+                type: 
+                  object
+                properties:
+                  id: 
+                    type: string
+                  username:
+                    type: string
+                  photo:
+                    type: array
+                    items:
+                      properties:
+                        id: 
+                          type: string
+                        data:
+                          type: string
+                          format: date-time
+                          description: Upload date
+                          example: "2022-01-01T00:00:00Z"
+                        photo:  
+                          type: string
+                          format: binary
+                  followers:
+                    type: integer
+                  following: 
+                    type: integer
+                  photoCounter:
+                    type: integer
+        '400':
+          description: |
+            User not found.
+    post:
+      tags: ["Social operations"]
+      summary: Follow a user
+      description: |
+        Lets user to follow another user.
+      operationId: followUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: |
+            User followed successfully.
+        '400':
+          description: |
+            Unable to follow this user.
+    delete:
+      tags: ["Social operations"]
+      summary: Unfollow a user
+      description: |
+        Lets user to unfollow another user.
+      operationId: unfollowUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200': 
+          description: |
+            User unfollowed successfully.
+        '400':
+          description: |
+            Unable to unfollow this user.
 
 components:
   securitySchemes:
