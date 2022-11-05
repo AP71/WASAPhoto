@@ -41,44 +41,7 @@ paths:
                   identifier:
                     type: string
                     example: "abcdef012345"
-    get:
-      tags: ["Operations"]
-      summary: Get users 
-      description: |
-        If a username is passed, it retrieves all users that match the username,
-        otherwise retrieve all users.
-      operationId: getUsers
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: username
-          in: query
-          schema: 
-            type: string
-          required: false
-      responses:
-        '200':
-          description: |
-            Obtain the list of the user. 
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  properties:
-                    id:
-                      type: string
-                    username:
-                      type: string 
-  /session/{id}:
-    parameters:
-    - name: id
-      in: path
-      schema:
-        type: string
-      required: true
-      description: username's identifier
-    patch:
+    put:
       tags: ["Operations"]
       summary: Changes the username
       description: |
@@ -105,11 +68,40 @@ paths:
         '200':
           description: |
             Username changed successfully.
-        '400':
+        '409':
           description: |
             This username is already used by another user.
-    post:
+    get:
       tags: ["Operations"]
+      summary: Search users
+      description: |
+        Retrieves all users that match the username passed in the query.
+      operationId: getUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: username
+          in: query
+          schema: 
+            type: string
+          required: false
+      responses:
+        '201':
+          description: |
+            Obtain the list of the user. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string 
+  /session/photo:  
+    post:
+      tags: ["Photo operations"]
       summary: Upload a new photo
       description: |
         Lets user to upload a new photo in their profile.
@@ -124,13 +116,37 @@ paths:
               type: string
               format: binary
       responses:
-        '200':
+        '201':
           description: |
             File uploaded successfully.
-  /session/profile:
+        '415':
+          description: |
+            File format not supported.
+    delete:
+      tags: ["Photo operations"]
+      summary: Delete a photo
+      description: |
+        Lets user to delete a photo.
+      operationId: deletePhoto
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idPhoto
+          in: query
+          schema: 
+            type: string
+          required: false
+      responses:
+        '204':
+          description: |
+            File uploaded successfully.
+        '404':
+          description: |
+            File not found.
+  /session/profile/{id}:
     parameters:
-      - name: idUser
-        in: query
+      - name: id
+        in: path
         schema:
           type: string
         required: true
@@ -144,7 +160,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        '201':
           description: |
             Profile returned successfully.
           content:
@@ -177,10 +193,10 @@ paths:
                     type: integer
                   photoCounter:
                     type: integer
-        '400':
+        '404':
           description: |
             User not found.
-    post:
+    put:
       tags: ["Social operations"]
       summary: Follow a user
       description: |
@@ -189,12 +205,15 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        '204':
           description: |
             User followed successfully.
-        '400':
+        '404':
           description: |
-            Unable to follow this user.
+            User not found.
+        '409':
+          description: |
+            Unable to follow this user (you already follow this user).
     delete:
       tags: ["Social operations"]
       summary: Unfollow a user
@@ -204,13 +223,274 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200': 
+        '204':
           description: |
             User unfollowed successfully.
-        '400':
+        '404':
           description: |
-            Unable to unfollow this user.
-
+            User not found.
+        '409':
+          description: |
+            Unable to unfollow this user (you don't follow this user).
+  /session/profile/{id}/status:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+        description: username's identifier
+    put:
+      tags: ["Social operations"]
+      summary: Ban another user
+      description: |
+        Lets user to ban another user.
+      operationId: banUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  format: date-time
+                  description: Upload date
+                  example: "2022-01-01T00:00:00Z"
+      responses:
+        '204':
+          description: |
+            User banned successfully.
+        '404':
+          description: |
+            User not found.
+        '409':
+          description: |
+            This user was already banned by you.
+    delete:
+      tags: ["Social operations"]
+      summary: Unban another user
+      description: |
+        Lets user to unban another user.
+      operationId: unbanUser
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            User unbanned successfully.
+        '404':
+          description: |
+            User not found.
+        '409':
+          description: |
+            This user wasn't banned from you.
+  /session/feed:
+    get:
+      tags: ["Feed operations"]
+      summary: Retrive photo stream
+      description: |
+        Retrieves all the photo shared by your following.
+      operationId: getMyStream
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: |
+            Obtain the list of image.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    idUser:
+                      type: string
+                    username: 
+                      type: string
+                    idPhoto: 
+                      type: string
+                    data:
+                      type: string
+                      format: date-time
+                      description: Upload date
+                      example: "2022-01-01T00:00:00Z"
+                    photo:  
+                      type: string
+                      format: binary
+                    numberOfLikes:
+                      type: integer
+                    numberOfComments:
+                      type: integer
+        '204':
+          description: |
+            There aren't any image to show.
+  /session/feed/{photo}/like:
+    parameters:
+    - name: photo
+      in: path
+      schema:
+        type: string
+      required: true
+      description: photo's identifier
+    put:
+      tags: ["Feed operations"]
+      summary: Place a like
+      description: |
+        Lets user to place a like on an image.
+      operationId: likePhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  format: date-time
+                  description: date
+                  example: "2022-01-01T00:00:00Z"
+      responses:
+        '204':
+          description: |
+            Like placed successfully.
+        '404':
+          description: |
+            Photo not found.
+        '409':
+          description: |
+            Like already placed on this photo.
+    delete:
+      tags: ["Feed operations"]
+      summary: Unplace a like
+      description: |
+        Lets user to unplace a like on an image.
+      operationId: unlikePhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idLike: 
+                  type: string
+      responses:
+        '204':
+          description: |
+            Like unplaced successfully.
+        '404':
+          description: |
+            Photo not found.
+        '409':
+          description: |
+            You didn't place a like on this photo.
+  /session/feed/{photo}/comment:
+    parameters:
+    - name: photo
+      in: path
+      schema:
+        type: string
+      required: true
+      description: photo's identifier
+    post:
+      tags: ["Feed operations"]
+      summary: Place a comment
+      description: |
+        Lets user to place a comment on an image.
+      operationId: commentPhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Comment details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  minLength: 1
+                  maxLength: 250
+                  description: commento
+                data:
+                  type: string
+                  format: date-time
+                  description: date
+                  example: "2022-01-01T00:00:00Z"
+        required: true
+      responses:
+        '204':
+          description: |
+            Comment placed successfully.
+        '404':
+          description: |
+            Photo not found.
+    delete:
+      tags: ["Feed operations"]
+      summary: Unplace a comment
+      description: |
+        Lets user to unplace a comment on an image.
+      operationId: uncommentPhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Comment details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idCommento:
+                  type: string
+                  description: idCommento
+        required: true
+      responses:
+        '204':
+          description: |
+            Comment unplaced successfully.
+        '404':
+          description: |
+            Photo not found.
+    get:
+      tags: ["Feed operations"]
+      summary: Retrive comments
+      description: |
+        Retrieve all comments related to the photo. 
+      operationId: getComments
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: |
+            Obtain the list of comments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    idUser:
+                      type: string
+                    username: 
+                      type: string
+                    idCommento: 
+                      type: string
+                    data:
+                      type: string
+                      format: date-time
+                      description: Upload date
+                      example: "2022-01-01T00:00:00Z"
+                    text:  
+                      type: string
+        '204':
+          description: |
+            There aren't any comment to retrive.
 components:
   securitySchemes:
     bearerAuth:
