@@ -57,6 +57,9 @@ paths:
         '409':
           description: |
             This username is already used by another user.
+        '401':
+          description: |
+            Unauthorized access.
     get:
       tags: ["Operations"]
       summary: Search users
@@ -85,6 +88,9 @@ paths:
                       type: string
                     username:
                       type: string 
+        '401':
+          description: |
+            Unauthorized access.
   /session/photo:  
     post:
       tags: ["Photo operations"]
@@ -109,6 +115,9 @@ paths:
         '415':
           description: |
             File format not supported.
+        '401':
+          description: |
+            Unauthorized access.
     delete:
       tags: ["Photo operations"]
       summary: Delete a photo
@@ -130,6 +139,9 @@ paths:
         '404':
           description: |
             File not found.
+        '401':
+          description: |
+            Unauthorized access.
   /session/profile/{username}:
     parameters:
       - name: username
@@ -180,6 +192,9 @@ paths:
                     type: integer
                   photoCounter:
                     type: integer
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             User not found.
@@ -219,6 +234,9 @@ paths:
         '409':
           description: |
             Unable to unfollow this user (you don't follow this user).
+        '401':
+          description: |
+            Unauthorized access.
   /session/profile/{username}/status:
     parameters:
       - name: username
@@ -314,6 +332,9 @@ paths:
         '204':
           description: |
             There aren't any image to show.
+        '401':
+          description: |
+            Unauthorized access.
   /session/feed/{photo}/like:
     parameters:
     - name: photo
@@ -330,21 +351,13 @@ paths:
       operationId: likePhoto
       security:
         - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: string
-                  format: date-time
-                  description: date
-                  example: "2022-01-01T00:00:00Z"
       responses:
         '204':
           description: |
             Like placed successfully.
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             Photo not found.
@@ -359,16 +372,13 @@ paths:
       operationId: unlikePhoto
       security:
         - bearerAuth: []
-      parameters:
-        - name: idPhoto
-          schema:
-            type: string
-          in: query
-          required: true
       responses:
         '204':
           description: |
             Like unplaced successfully.
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             Photo not found.
@@ -402,6 +412,9 @@ paths:
         '204':
           description: |
             Comment placed successfully.
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             Photo not found.
@@ -423,6 +436,9 @@ paths:
         '204':
           description: |
             Comment unplaced successfully.
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             Photo not found.
@@ -445,6 +461,9 @@ paths:
         '204':
           description: |
             There aren't any comment to retrive.
+        '401':
+          description: |
+            Unauthorized access.
 components:
   securitySchemes:
     bearerAuth:
@@ -488,11 +507,6 @@ components:
           minLength: 1
           maxLength: 250
           description: commento
-        data:
-          type: string
-          format: date-time
-          description: date
-          example: "2022-01-01T00:00:00Z"
     
             
             
