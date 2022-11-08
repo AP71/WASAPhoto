@@ -253,17 +253,6 @@ paths:
       operationId: banUser
       security:
         - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: string
-                  format: date-time
-                  description: Upload date
-                  example: "2022-01-01T00:00:00Z"
       responses:
         '204':
           description: |
@@ -308,27 +297,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  properties:
-                    idUser:
-                      type: string
-                    username: 
-                      type: string
-                    idPhoto: 
-                      type: string
-                    data:
-                      type: string
-                      format: date-time
-                      description: Upload date
-                      example: "2022-01-01T00:00:00Z"
-                    photo:  
-                      type: string
-                      format: binary
-                    numberOfLikes:
-                      type: integer
-                    numberOfComments:
-                      type: integer
+                $ref: '#/components/schemas/feedPhoto'
         '204':
           description: |
             There aren't any image to show.
@@ -507,6 +476,28 @@ components:
           minLength: 1
           maxLength: 250
           description: commento
-    
+    feedPhoto:
+      type: array
+      items:
+        properties:
+          idUser:
+            type: string
+          username: 
+            type: string
+          idPhoto: 
+            type: string
+          data:
+            type: string
+            format: date-time
+            description: Upload date
+            example: "2022-01-01T00:00:00Z"
+          photo:  
+            type: string
+            format: binary
+          numberOfLikes:
+            type: integer
+          numberOfComments:
+            type: integer
+
             
             
