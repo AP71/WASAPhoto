@@ -312,7 +312,7 @@ paths:
         type: string
       required: true
       description: photo's identifier
-    put:
+    post:
       tags: ["Feed operations"]
       summary: Place a like
       description: |
