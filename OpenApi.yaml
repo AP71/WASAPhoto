@@ -198,7 +198,7 @@ paths:
         '404':
           description: |
             User not found.
-    put:
+    post:
       tags: ["Social operations"]
       summary: Follow a user
       description: |
@@ -215,7 +215,7 @@ paths:
             User not found.
         '409':
           description: |
-            Unable to follow this user (you already follow this user).
+            Unable to follow this user (you already follow he).
     delete:
       tags: ["Social operations"]
       summary: Unfollow a user
@@ -245,7 +245,7 @@ paths:
           type: string
         required: true
         description: username's identifier
-    put:
+    post:
       tags: ["Social operations"]
       summary: Ban another user
       description: |
