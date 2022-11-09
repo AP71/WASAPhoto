@@ -6,6 +6,7 @@ info:
     from your PC, you can upload your photos, and they will be visible to everyone who is following you.
   version: "0.0.1"
 paths:
+
   /session:
     post:
       tags: ["Login"]
@@ -281,7 +282,7 @@ paths:
         '409':
           description: |
             This user wasn't banned from you.
-  /session/feed:
+  /feed:
     get:
       tags: ["Feed operations"]
       summary: Retrive photo stream
@@ -304,7 +305,7 @@ paths:
         '401':
           description: |
             Unauthorized access.
-  /session/feed/{photo}/like:
+  /feed/{photo}/like:
     parameters:
     - name: photo
       in: path
@@ -354,7 +355,7 @@ paths:
         '409':
           description: |
             You didn't place a like on this photo.
-  /session/feed/{photo}/comment:
+  /feed/{photo}/comment:
     parameters:
     - name: photo
       in: path
