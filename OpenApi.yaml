@@ -291,6 +291,12 @@ paths:
       operationId: getMyStream
       security:
         - bearerAuth: []
+      parameters:
+        - name: pageToken
+          in: query
+          schema: 
+            type: string
+          required: false
       responses:
         '201':
           description: |
@@ -478,27 +484,32 @@ components:
           maxLength: 250
           description: commento
     feedPhoto:
-      type: array
-      items:
-        properties:
-          idUser:
-            type: string
-          username: 
-            type: string
-          idPhoto: 
-            type: string
-          data:
-            type: string
-            format: date-time
-            description: Upload date
-            example: "2022-01-01T00:00:00Z"
-          photo:  
-            type: string
-            format: binary
-          numberOfLikes:
-            type: integer
-          numberOfComments:
-            type: integer
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            properties:
+              idUser:
+                type: string
+              username: 
+                type: string
+              idPhoto: 
+                type: string
+              data:
+                type: string
+                format: date-time
+                description: Upload date
+                example: "2022-01-01T00:00:00Z"
+              photo:  
+                type: string
+                format: binary
+              numberOfLikes:
+                type: integer
+              numberOfComments:
+                type: integer
+        nextPage:
+          type: string
 
             
             
