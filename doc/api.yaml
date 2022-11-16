@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  title: WASAPhoto
+  description: |
+    Keep in touch with your friends by sharing photos of special moments, thanks to WASAPhoto! Directly
+    from your PC, you can upload your photos, and they will be visible to everyone who is following you.
+  version: "0.0.1"
+paths:
+
+  /session:
+    post:
+      tags: ["Login"]
+      summary: Logs in the user
+      description: |
+        If the user does not exist, it will be created,
+        and an identifier is returned.
+        If the user exists, the user identifier is returned.
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/username'
+        required: true
+      responses:
+        '201':
+          description: |
+              User log-in action successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+                    example: "abcdef012345"
+    put:
+      tags: ["Operations"]
+      summary: Changes the username
+      description: |
+        Lets user to change their username with another one.
+        If the username isn't free, an error will return.
+      operationId: setMyUserName
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: New username
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/username'
+        required: true
+      responses:
+        '200':
+          description: |
+            Username changed successfully.
+        '409':
+          description: |
+            This username is already used by another user.
+        '401':
+          description: |
+            Unauthorized access.
+    get:
+      tags: ["Operations"]
+      summary: Search users
+      description: |
+        Retrieves all users that match the username passed in the query.
+      operationId: getUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: username
+          in: query
+          schema: 
+            type: string
+          required: true
+      responses:
+        '201':
+          description: |
+            Obtain the list of the user. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string 
+        '401':
+          description: |
+            Unauthorized access.
+  /photo:  
+    post:
+      tags: ["Photo operations"]
+      summary: Upload a new photo
+      description: |
+        Lets user to upload a new photo in their profile.
+      operationId: uploadPhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: New photo
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '201':
+          description: |
+            File uploaded successfully.
+        '415':
+          description: |
+            File format not supported.
+        '401':
+          description: |
+            Unauthorized access.
+    delete:
+      tags: ["Photo operations"]
+      summary: Delete a photo
+      description: |
+        Lets user to delete a photo.
+      operationId: deletePhoto
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idPhoto
+          in: query
+          schema: 
+            type: string
+          required: true
+      responses:
+        '204':
+          description: |
+            File uploaded successfully.
+        '404':
+          description: |
+            File not found.
+        '401':
+          description: |
+            Unauthorized access.
+  /profile/{username}:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        required: true
+        description: username's identifier
+    get:
+      tags: ["Social operations"]
+      summary: Retrive a user's profile
+      description: |
+        Returns the profile of the user passed as input in the path.
+      operationId: getUserProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: |
+            Profile returned successfully.
+          content:
+            application/json:
+              schema:
+                type: 
+                  object
+                properties:
+                  id: 
+                    type: string
+                  username:
+                    type: string
+                  photo:
+                    type: array
+                    items:
+                      properties:
+                        id: 
+                          type: string
+                        data:
+                          type: string
+                          format: date-time
+                          description: Upload date
+                          example: "2022-01-01T00:00:00Z"
+                        photo:  
+                          type: string
+                          format: binary
+                  followers:
+                    type: integer
+                  following: 
+                    type: integer
+                  photoCounter:
+                    type: integer
+        '401':
+          description: |
+            Unauthorized access.
+        '404':
+          description: |
+            User not found.
+    post:
+      tags: ["Social operations"]
+      summary: Follow a user
+      description: |
+        Lets user to follow another user.
+      operationId: followUser
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            User followed successfully.
+        '404':
+          description: |
+            User not found.
+        '409':
+          description: |
+            Unable to follow this user (you already follow he).
+    delete:
+      tags: ["Social operations"]
+      summary: Unfollow a user
+      description: |
+        Lets user to unfollow another user.
+      operationId: unfollowUser
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            User unfollowed successfully.
+        '404':
+          description: |
+            User not found.
+        '409':
+          description: |
+            Unable to unfollow this user (you don't follow this user).
+        '401':
+          description: |
+            Unauthorized access.
+  /profile/{username}/status:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        required: true
+        description: username's identifier
+    post:
+      tags: ["Social operations"]
+      summary: Ban another user
+      description: |
+        Lets user to ban another user.
+      operationId: banUser
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            User banned successfully.
+        '404':
+          description: |
+            User not found.
+        '409':
+          description: |
+            This user was already banned by you.
+    delete:
+      tags: ["Social operations"]
+      summary: Unban another user
+      description: |
+        Lets user to unban another user.
+      operationId: unbanUser
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            User unbanned successfully.
+        '404':
+          description: |
+            User not found.
+        '409':
+          description: |
+            This user wasn't banned from you.
+  /feed:
+    get:
+      tags: ["Feed operations"]
+      summary: Retrive photo stream
+      description: |
+        Retrieves all the photo shared by your following.
+      operationId: getMyStream
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: pageToken
+          in: query
+          schema: 
+            type: string
+          required: false
+      responses:
+        '201':
+          description: |
+            Obtain the list of image.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/feedPhoto'
+        '204':
+          description: |
+            There aren't any image to show.
+        '401':
+          description: |
+            Unauthorized access.
+  /feed/{photo}/like:
+    parameters:
+    - name: photo
+      in: path
+      schema:
+        type: string
+      required: true
+      description: photo's identifier
+    post:
+      tags: ["Feed operations"]
+      summary: Place a like
+      description: |
+        Lets user to place a like on an image.
+      operationId: likePhoto
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            Like placed successfully.
+        '401':
+          description: |
+            Unauthorized access.
+        '404':
+          description: |
+            Photo not found.
+        '409':
+          description: |
+            Like already placed on this photo.
+    delete:
+      tags: ["Feed operations"]
+      summary: Unplace a like
+      description: |
+        Lets user to unplace a like on an image.
+      operationId: unlikePhoto
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            Like unplaced successfully.
+        '401':
+          description: |
+            Unauthorized access.
+        '404':
+          description: |
+            Photo not found.
+        '409':
+          description: |
+            You didn't place a like on this photo.
+  /feed/{photo}/comment:
+    parameters:
+    - name: photo
+      in: path
+      schema:
+        type: string
+      required: true
+      description: photo's identifier
+    post:
+      tags: ["Feed operations"]
+      summary: Place a comment
+      description: |
+        Lets user to place a comment on an image.
+      operationId: commentPhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Comment details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commento'
+        required: true
+      responses:
+        '204':
+          description: |
+            Comment placed successfully.
+        '401':
+          description: |
+            Unauthorized access.
+        '404':
+          description: |
+            Photo not found.
+    delete:
+      tags: ["Feed operations"]
+      summary: Unplace a comment
+      description: |
+        Lets user to unplace a comment on an image.
+      operationId: uncommentPhoto
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idCommento
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        '204':
+          description: |
+            Comment unplaced successfully.
+        '401':
+          description: |
+            Unauthorized access.
+        '404':
+          description: |
+            Photo not found.
+    get:
+      tags: ["Feed operations"]
+      summary: Retrive comments
+      description: |
+        Retrieve all comments related to the photo. 
+      operationId: getComments
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: |
+            Obtain the list of comments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comments'
+        '204':
+          description: |
+            There aren't any comment to retrive.
+        '401':
+          description: |
+            Unauthorized access.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    UnauthorizedError:
+      description: Access username is missing or invalid
+  schemas:  
+    username:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Maria
+            pattern: 'ˆ.*?$'
+            minLength: 3
+            maxLength: 16
+    comments:
+      type: array
+      items:
+        properties:
+          idUser:
+            type: string
+          username: 
+            type: string
+          idCommento: 
+            type: string
+          data:
+            type: string
+            format: date-time
+            description: Upload date
+            example: "2022-01-01T00:00:00Z"
+          text:  
+            type: string
+    commento:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 250
+          description: commento
+    feedPhoto:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            properties:
+              idUser:
+                type: string
+              username: 
+                type: string
+              idPhoto: 
+                type: string
+              data:
+                type: string
+                format: date-time
+                description: Upload date
+                example: "2022-01-01T00:00:00Z"
+              photo:  
+                type: string
+                format: binary
+              numberOfLikes:
+                type: integer
+              numberOfComments:
+                type: integer
+        nextPage:
+          type: string
+
+            
+            
