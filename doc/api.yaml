@@ -87,8 +87,10 @@ paths:
                   properties:
                     id:
                       type: string
+                      example: abcdef012345
                     username:
-                      type: string 
+                      type: string
+                      example:  Maria
         '401':
           description: |
             Unauthorized access.
@@ -136,7 +138,7 @@ paths:
       responses:
         '204':
           description: |
-            File uploaded successfully.
+            File deleted successfully.
         '404':
           description: |
             File not found.
@@ -149,8 +151,9 @@ paths:
         in: path
         schema:
           type: string
+          example: Maria
         required: true
-        description: username's identifier
+        description: username's name
     get:
       tags: ["Social operations"]
       summary: Retrive a user's profile
@@ -166,33 +169,7 @@ paths:
           content:
             application/json:
               schema:
-                type: 
-                  object
-                properties:
-                  id: 
-                    type: string
-                  username:
-                    type: string
-                  photo:
-                    type: array
-                    items:
-                      properties:
-                        id: 
-                          type: string
-                        data:
-                          type: string
-                          format: date-time
-                          description: Upload date
-                          example: "2022-01-01T00:00:00Z"
-                        photo:  
-                          type: string
-                          format: binary
-                  followers:
-                    type: integer
-                  following: 
-                    type: integer
-                  photoCounter:
-                    type: integer
+                $ref: '#/components/schemas/userProfile'
         '401':
           description: |
             Unauthorized access.
@@ -292,10 +269,10 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: pageToken
+        - name: pageId
           in: query
           schema: 
-            type: string
+            type: integer
           required: false
       responses:
         '201':
@@ -449,6 +426,28 @@ components:
     UnauthorizedError:
       description: Access username is missing or invalid
   schemas:  
+    userProfile:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: abcdef012345
+        username:
+          type: string
+          example: Maria
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/postsExample'
+        followers:
+          type: integer
+          example: 3543
+        following: 
+          type: integer
+          example: 245
+        photoCounter:
+          type: integer
+          example: 6
     username:
         type: object
         properties:
@@ -464,10 +463,13 @@ components:
         properties:
           idUser:
             type: string
+            example: abcdef012345
           username: 
             type: string
+            example: Maria
           idCommento: 
             type: string
+            example: ff3r84vr
           data:
             type: string
             format: date-time
@@ -475,6 +477,7 @@ components:
             example: "2022-01-01T00:00:00Z"
           text:  
             type: string
+            example: Bella foto!!
     commento:
       type: object
       properties:
@@ -483,33 +486,38 @@ components:
           minLength: 1
           maxLength: 250
           description: commento
+          example: Bella foto!!
     feedPhoto:
       type: object
       properties:
         posts:
           type: array
           items:
-            properties:
-              idUser:
-                type: string
-              username: 
-                type: string
-              idPhoto: 
-                type: string
-              data:
-                type: string
-                format: date-time
-                description: Upload date
-                example: "2022-01-01T00:00:00Z"
-              photo:  
-                type: string
-                format: binary
-              numberOfLikes:
-                type: integer
-              numberOfComments:
-                type: integer
-        nextPage:
+            $ref: '#/components/schemas/postsExample'
+        nextPageId:
+          type: integer
+          example: 1
+    postsExample:
+      properties:
+        id: 
           type: string
+          example: ff3r84vr
+        data:
+          type: string
+          format: date-time
+          description: Upload date
+          example: "2022-01-01T00:00:00Z"
+        photo:  
+          type: string
+          format: binary
+        numberOfLikes:
+          type: integer
+          example: 540
+        numberOfComments:
+          type: integer
+          example: 15
+      
+    
 
             
             
