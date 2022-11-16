@@ -284,7 +284,7 @@ paths:
                 $ref: '#/components/schemas/feedPhoto'
         '204':
           description: |
-            There aren't any image to show.
+            There isn't any image to show.
         '401':
           description: |
             Unauthorized access.
@@ -427,14 +427,14 @@ components:
       description: Access username is missing or invalid
   schemas:  
     userProfile:
+      title: User's Profile
       type: object
       properties:
         id: 
           type: string
           example: abcdef012345
         username:
-          type: string
-          example: Maria
+          $ref: '#/components/schemas/username'
         photos:
           type: array
           items:
@@ -449,15 +449,14 @@ components:
           type: integer
           example: 6
     username:
-        type: object
-        properties:
-          name:
-            type: string
-            example: Maria
-            pattern: 'ˆ.*?$'
-            minLength: 3
-            maxLength: 16
+      title: User's username
+      type: string
+      pattern: 'ˆ.*?$'
+      minLength: 3
+      maxLength: 16
+      example: Maria
     comments:
+      title: List of comments
       type: array
       items:
         properties:
@@ -473,21 +472,21 @@ components:
           data:
             type: string
             format: date-time
-            description: Upload date
             example: "2022-01-01T00:00:00Z"
           text:  
-            type: string
-            example: Bella foto!!
-    commento:
+            $ref: '#/components/schemas/comment'
+    comment:
+      title: Example of comment
       type: object
       properties:
         text:
           type: string
           minLength: 1
           maxLength: 250
-          description: commento
+          description: comment
           example: Bella foto!!
     feedPhoto:
+      title: Feed containing photos
       type: object
       properties:
         posts:
@@ -496,8 +495,11 @@ components:
             $ref: '#/components/schemas/postsExample'
         nextPageId:
           type: integer
+          minimum: 1
           example: 1
     postsExample:
+      title: Example of post
+      type: object
       properties:
         id: 
           type: string
