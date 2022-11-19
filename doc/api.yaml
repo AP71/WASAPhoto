@@ -35,6 +35,7 @@ paths:
                   identifier:
                     type: string
                     example: "abcdef012345"
+  /profile:
     put:
       tags: ["Operations"]
       summary: Changes the username
@@ -145,7 +146,7 @@ paths:
         '401':
           description: |
             Unauthorized access.
-  /profile/{username}:
+  /search/{username}:
     parameters:
       - name: username
         in: path
@@ -215,7 +216,7 @@ paths:
         '401':
           description: |
             Unauthorized access.
-  /profile/{username}/status:
+  /search/{username}/status:
     parameters:
       - name: username
         in: path
@@ -466,14 +467,14 @@ components:
           username: 
             type: string
             example: Maria
-          idCommento: 
+          commentId: 
             type: string
             example: ff3r84vr
           data:
             type: string
             format: date-time
             example: "2022-01-01T00:00:00Z"
-          text:  
+          comment:  
             $ref: '#/components/schemas/comment'
     comment:
       title: Example of comment
@@ -518,8 +519,6 @@ components:
         numberOfComments:
           type: integer
           example: 15
-      
-    
 
             
             
