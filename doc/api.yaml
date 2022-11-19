@@ -6,7 +6,6 @@ info:
     from your PC, you can upload your photos, and they will be visible to everyone who is following you.
   version: "0.0.1"
 paths:
-
   /session:
     post:
       tags: ["Login"]
@@ -50,10 +49,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/username'
+              $ref: '#/components/schemas/newUsername'
         required: true
       responses:
-        '200':
+        '204':
           description: |
             Username changed successfully.
         '409':
@@ -113,7 +112,7 @@ paths:
               format: binary
         required: true
       responses:
-        '201':
+        '204':
           description: |
             File uploaded successfully.
         '415':
@@ -154,7 +153,7 @@ paths:
           type: string
           example: Maria
         required: true
-        description: username's name
+        description: Username's name.
     get:
       tags: ["Social operations"]
       summary: Retrive a user's profile
@@ -223,7 +222,7 @@ paths:
         schema:
           type: string
         required: true
-        description: username's identifier
+        description: Username's identifier.
     post:
       tags: ["Social operations"]
       summary: Ban another user
@@ -265,7 +264,7 @@ paths:
       tags: ["Feed operations"]
       summary: Retrive photo stream
       description: |
-        Retrieves all the photo shared by your following.
+        Retrieves all the photo shared by your following. If the pageId is not passed, the first page will returned.
       operationId: getMyStream
       security:
         - bearerAuth: []
@@ -274,6 +273,7 @@ paths:
           in: query
           schema: 
             type: integer
+          description: Id of the page to retrive.
           required: false
       responses:
         '201':
@@ -296,7 +296,7 @@ paths:
       schema:
         type: string
       required: true
-      description: photo's identifier
+      description: Photo's identifier.
     post:
       tags: ["Feed operations"]
       summary: Place a like
@@ -346,7 +346,7 @@ paths:
       schema:
         type: string
       required: true
-      description: photo's identifier
+      description: Photo's identifier.
     post:
       tags: ["Feed operations"]
       summary: Place a comment
@@ -400,10 +400,16 @@ paths:
       tags: ["Feed operations"]
       summary: Retrive comments
       description: |
-        Retrieve all comments related to the photo. 
+        Retrieve all comments related to the photo. If the commentsPageId is not passed, the first page of comments will returned.
       operationId: getComments
       security:
         - bearerAuth: []
+      parameters:
+        - name: commentsPageId
+          in: query
+          schema:
+            type: integer
+          required: false
       responses:
         '201':
           description: |
@@ -425,7 +431,7 @@ components:
       scheme: bearer
   responses:
     UnauthorizedError:
-      description: Access username is missing or invalid
+      description: Access username is missing or invalid.
   schemas:  
     userProfile:
       title: User's Profile
@@ -435,56 +441,84 @@ components:
           type: string
           example: abcdef012345
         username:
-          $ref: '#/components/schemas/username'
+          type: string
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+          example: Maria
         photos:
           type: array
           items:
             $ref: '#/components/schemas/postsExample'
+          minItems: 1
+          maxItems: 1000
         followers:
           type: integer
           example: 3543
+          minimum: 0
         following: 
           type: integer
           example: 245
+          minimum: 0
         photoCounter:
           type: integer
           example: 6
-    username:
-      title: User's username
-      type: string
-      pattern: 'ˆ.*?$'
-      minLength: 3
-      maxLength: 16
-      example: Maria
+          minimum: 0
+    newUsername:
+      title: New Username      
+      type: object
+      properties:
+        newUsername:
+          type: string
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+          example: Maria
     comments:
       title: List of comments
-      type: array
-      items:
-        properties:
-          idUser:
-            type: string
-            example: abcdef012345
-          username: 
-            type: string
-            example: Maria
-          commentId: 
-            type: string
-            example: ff3r84vr
-          data:
-            type: string
-            format: date-time
-            example: "2022-01-01T00:00:00Z"
-          comment:  
-            $ref: '#/components/schemas/comment'
+      type: object
+      properties:
+        comments:
+          description: List of comments.
+          type: array
+          items:
+            properties:
+              idUser:
+                type: string
+                example: abcdef012345
+              username: 
+                type: string
+                pattern: 'ˆ.*?$'
+                minLength: 3
+                maxLength: 16
+                example: Maria
+              commentId: 
+                type: string
+                example: ff3r84vr
+              data:
+                type: string
+                format: date-time
+                example: "2022-01-01T00:00:00Z"
+              text:  
+                type: string
+                minLength: 1
+                maxLength: 250
+                example: Bella foto!!
+          minItems: 1
+          maxItems: 10
+        nextCommentPageId:
+          type: integer
+          minimum: 1
+          example: 2
+          description: Id of the next page of comments.
     comment:
-      title: Example of comment
+      title: Comment example
       type: object
       properties:
         text:
           type: string
           minLength: 1
           maxLength: 250
-          description: comment
           example: Bella foto!!
     feedPhoto:
       title: Feed containing photos
@@ -494,12 +528,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/postsExample'
+          minItems: 1
+          maxItems: 10
         nextPageId:
           type: integer
           minimum: 1
-          example: 1
+          example: 7
     postsExample:
-      title: Example of post
+      title: Post example
       type: object
       properties:
         id: 
@@ -516,9 +552,20 @@ components:
         numberOfLikes:
           type: integer
           example: 540
+          minimum: 0
         numberOfComments:
           type: integer
           example: 15
-
-            
+          minimum: 0
+    username:
+      title: Username
+      type: object
+      properties:
+        username:
+          type: string
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+          example: Maria
+        
             
