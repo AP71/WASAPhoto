@@ -29,11 +29,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                    example: "abcdef012345"
+                $ref: '#/components/schemas/identifier'
+                
   /profile:
     put:
       tags: ["Operations"]
@@ -65,7 +62,7 @@ paths:
       tags: ["Operations"]
       summary: Search users
       description: |
-        Retrieves all users that match the username passed in the query.
+        Retrieves all users that match the username passed in the query. If the feedPageId is not passed, the first page will returned.
       operationId: getUsers
       security:
         - bearerAuth: []
@@ -75,6 +72,11 @@ paths:
           schema: 
             type: string
           required: true
+        - name: usersPageId
+          in: query
+          schema:
+              type: integer
+          required: false
       responses:
         '201':
           description: |
@@ -82,15 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  properties:
-                    id:
-                      type: string
-                      example: abcdef012345
-                    username:
-                      type: string
-                      example:  Maria
+                $ref: '#/components/schemas/users'
         '401':
           description: |
             Unauthorized access.
@@ -530,10 +524,11 @@ components:
             $ref: '#/components/schemas/postsExample'
           minItems: 1
           maxItems: 10
-        nextPageId:
+        nextFeedPageId:
           type: integer
           minimum: 1
           example: 7
+          description: Id of the next page of posts.
     postsExample:
       title: Post example
       type: object
@@ -567,5 +562,36 @@ components:
           minLength: 3
           maxLength: 16
           example: Maria
-        
+    identifier:
+      title: User identifier
+      type: object
+      properties:
+        identifier:
+          type: string
+          example: "abcdef012345"
+    users:
+      title: List of users
+      type: object
+      properties: 
+        users:
+          type: array
+          items:
+            properties:
+              id:
+                type: string
+                example: abcdef012345
+              username:
+                type: string
+                pattern: 'ˆ.*?$'
+                minLength: 3
+                maxLength: 16
+                example: Maria
+          minItems: 1
+          maxItems: 1000
+        nextUsersPageId: 
+          type: integer
+          minimum: 1
+          example: 7
+          description: Id of the next page of users.
+
             
