@@ -359,7 +359,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/commento'
+              $ref: '#/components/schemas/comment'
         required: true
       responses:
         '204':
