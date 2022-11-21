@@ -5,6 +5,17 @@ info:
     Keep in touch with your friends by sharing photos of special moments, thanks to WASAPhoto! Directly
     from your PC, you can upload your photos, and they will be visible to everyone who is following you.
   version: "0.0.1"
+tags: 
+  - name: "Login"
+    description: "Login operations"
+  - name: "Operations"
+    description: "Profile operations"
+  - name: "Photo operations"
+    description: "Photo operations"
+  - name: "Social operations"
+    description: "Social operations"
+  - name: "Feed operations"
+    description: "Feed operations"
 paths:
   /session:
     post:
@@ -29,8 +40,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/identifier'
-                
+                $ref: '#/components/schemas/success'              
   /profile:
     put:
       tags: ["Operations"]
@@ -49,9 +59,13 @@ paths:
               $ref: '#/components/schemas/newUsername'
         required: true
       responses:
-        '204':
+        '201':
           description: |
             Username changed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/username'
         '409':
           description: |
             This username is already used by another user.
@@ -78,13 +92,13 @@ paths:
               type: integer
           required: false
       responses:
-        '201':
+        '200':
           description: |
             Obtain the list of the user. 
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/users'
+                $ref: '#/components/schemas/success'
         '401':
           description: |
             Unauthorized access.
@@ -100,15 +114,18 @@ paths:
       requestBody:
         description: New photo
         content:
-          image/*:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/file'              
         required: true
       responses:
-        '204':
+        '201':
           description: |
             File uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
         '415':
           description: |
             File format not supported.
@@ -157,7 +174,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '201':
+        '200':
           description: |
             Profile returned successfully.
           content:
@@ -179,9 +196,13 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '201':
           description: |
             User followed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
         '404':
           description: |
             User not found.
@@ -226,9 +247,13 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '201':
           description: |
             User banned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
         '404':
           description: |
             User not found.
@@ -270,7 +295,7 @@ paths:
           description: Id of the page to retrive.
           required: false
       responses:
-        '201':
+        '200':
           description: |
             Obtain the list of image.
           content:
@@ -300,9 +325,13 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '201':
           description: |
             Like placed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
         '401':
           description: |
             Unauthorized access.
@@ -357,9 +386,13 @@ paths:
               $ref: '#/components/schemas/comment'
         required: true
       responses:
-        '204':
+        '201':
           description: |
             Comment placed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
         '401':
           description: |
             Unauthorized access.
@@ -405,7 +438,7 @@ paths:
             type: integer
           required: false
       responses:
-        '201':
+        '200':
           description: |
             Obtain the list of comments.
           content:
@@ -429,6 +462,8 @@ components:
   schemas:  
     userProfile:
       title: User's Profile
+      description: |
+        Represents user profile, including followers, following, number of posts and photos.
       type: object
       properties:
         id: 
@@ -436,7 +471,7 @@ components:
           example: abcdef012345
         username:
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^[a-zA-Z0-9_.]*$'
           minLength: 3
           maxLength: 16
           example: Maria
@@ -460,16 +495,20 @@ components:
           minimum: 0
     newUsername:
       title: New Username      
+      description: |
+        Represents the user's username.
       type: object
       properties:
         newUsername:
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^[a-zA-Z0-9_.]*$'
           minLength: 3
           maxLength: 16
           example: Maria
     comments:
-      title: List of comments
+      title: List of comments 
+      description: |
+        Represents the list of comments.
       type: object
       properties:
         comments:
@@ -482,7 +521,7 @@ components:
                 example: abcdef012345
               username: 
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^[a-zA-Z0-9_.]*$'
                 minLength: 3
                 maxLength: 16
                 example: Maria
@@ -507,6 +546,8 @@ components:
           description: Id of the next page of comments.
     comment:
       title: Comment example
+      description: |
+        Represents one comment.
       type: object
       properties:
         text:
@@ -516,6 +557,8 @@ components:
           example: Bella foto!!
     feedPhoto:
       title: Feed containing photos
+      description: |
+        Represents the feed.
       type: object
       properties:
         posts:
@@ -531,6 +574,8 @@ components:
           description: Id of the next page of posts.
     postsExample:
       title: Post example
+      description: |
+        Represents one post.
       type: object
       properties:
         id: 
@@ -554,16 +599,20 @@ components:
           minimum: 0
     username:
       title: Username
+      description: |
+        Represents the username.
       type: object
       properties:
         username:
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^[a-zA-Z0-9_.]*$'
           minLength: 3
           maxLength: 16
           example: Maria
     identifier:
       title: User identifier
+      description: |
+        Represents the user's identifier.
       type: object
       properties:
         identifier:
@@ -571,6 +620,8 @@ components:
           example: "abcdef012345"
     users:
       title: List of users
+      description: |
+        Represents an object that includes a list of 10 photos and the number of the next page of itmes.
       type: object
       properties: 
         users:
@@ -582,7 +633,7 @@ components:
                 example: abcdef012345
               username:
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^[a-zA-Z0-9_.]*$'
                 minLength: 3
                 maxLength: 16
                 example: Maria
@@ -593,5 +644,19 @@ components:
           minimum: 1
           example: 7
           description: Id of the next page of users.
-
-            
+    success:
+      title: Success message
+      description: |
+        Represents an object that includes a message.
+      type: object
+      properties:
+        message:
+          type: string
+          example: Resource created
+    file: 
+      title: File
+      description: |
+        Represents a file.
+      type: string
+      format: binary
+              
