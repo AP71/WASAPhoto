@@ -85,11 +85,16 @@ paths:
           in: query
           schema: 
             type: string
+            pattern: '^[a-zA-Z0-9_.]*$'
+            example: Maria
+          description: User username.
           required: true
         - name: usersPageId
           in: query
           schema:
               type: integer
+              example: 1
+          description: Result page number.
           required: false
       responses:
         '200':
