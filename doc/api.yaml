@@ -155,7 +155,9 @@ paths:
             pattern: ^[a-zA-Z0-9]*$'
             minLength: 8
             maxLength: 8
+            description: Photo identifier.
           required: true
+          description: Photo identifier.
       responses:
         '204':
           description: |
@@ -172,7 +174,7 @@ paths:
         in: path
         schema:
           type: string
-          pattern: ^[a-zA-Z0-9_.]*$'
+          pattern: '^[a-zA-Z0-9_.]*$'
           minLength: 3
           maxLength: 16
           example: Maria
@@ -388,10 +390,11 @@ paths:
       in: path
       schema:
         type: string
-        example: Maria
-        pattern: ^[a-zA-Z0-9]*$'
+        example: ft75fg57
+        pattern: '^[a-zA-Z0-9]*$'
         minLength: 8
         maxLength: 8
+        description: Photo identifier.
       required: true
       description: Photo's identifier.
     post:
@@ -440,6 +443,7 @@ paths:
             maxLength: 8
           in: query
           required: true
+          description: Comment identifier.
       responses:
         '204':
           description: |
@@ -493,30 +497,36 @@ components:
         id: 
           type: string
           example: abcdef012345
+          description: User identifier.
         username:
           type: string
           pattern: '^[a-zA-Z0-9_.]*$'
           minLength: 3
           maxLength: 16
           example: Maria
+          description: User's username.
         photos:
           type: array
           items:
             $ref: '#/components/schemas/postsExample'
           minItems: 1
           maxItems: 1000
+          description: List of photos.
         followers:
           type: integer
           example: 3543
           minimum: 0
+          description: Number of followers.
         following: 
           type: integer
           example: 245
           minimum: 0
+          description: Number of following.
         photoCounter:
           type: integer
           example: 6
           minimum: 0
+          description: Number of photos.
     newUsername:
       title: New Username      
       description: |
@@ -529,6 +539,7 @@ components:
           minLength: 3
           maxLength: 16
           example: Maria
+          description: New username value.
     comments:
       title: List of comments 
       description: |
@@ -543,24 +554,29 @@ components:
               idUser:
                 type: string
                 example: abcdef012345
+                description: User identifier.
               username: 
                 type: string
                 pattern: '^[a-zA-Z0-9_.]*$'
                 minLength: 3
                 maxLength: 16
                 example: Maria
+                description: User's username.
               commentId: 
                 type: string
                 example: ff3r84vr
+                description: Comment identifier.
               data:
                 type: string
                 format: date-time
                 example: "2022-01-01T00:00:00Z"
+                description: Upload date.
               text:  
                 type: string
                 minLength: 1
                 maxLength: 250
                 example: Bella foto!!
+                description: Comment text.
           minItems: 1
           maxItems: 10
         nextCommentPageId:
@@ -576,10 +592,11 @@ components:
       properties:
         text:
           type: string
-          pattern: '^[a-zA-Z0-9_.,!?:;""$%&€()[{}]]*$'
+          pattern: '^[a-zA-Z0-9_., !?:;""$%&€()[{}]]*$'
           minLength: 1
           maxLength: 250
           example: Bella foto!!
+          description: Comment text.
     feedPhoto:
       title: Feed containing photos
       description: |
@@ -592,6 +609,7 @@ components:
             $ref: '#/components/schemas/postsExample'
           minItems: 1
           maxItems: 10
+          description: List of photos.
         nextFeedPageId:
           type: integer
           minimum: 1
@@ -606,6 +624,7 @@ components:
         id: 
           type: string
           example: ff3r84vr
+          description: Photo identifier.
         data:
           type: string
           format: date-time
@@ -614,14 +633,17 @@ components:
         photo:  
           type: string
           format: binary
+          description: File.
         numberOfLikes:
           type: integer
           example: 540
           minimum: 0
+          description: Number of likes.
         numberOfComments:
           type: integer
           example: 15
           minimum: 0
+          description: Number of comments.
     username:
       title: Username
       description: |
@@ -634,15 +656,7 @@ components:
           minLength: 3
           maxLength: 16
           example: Maria
-    identifier:
-      title: User identifier
-      description: |
-        Represents the user's identifier.
-      type: object
-      properties:
-        identifier:
-          type: string
-          example: "abcdef012345"
+          description: User's username.
     users:
       title: List of users
       description: |
@@ -656,14 +670,17 @@ components:
               id:
                 type: string
                 example: abcdef012345
+                description: User's identifier.
               username:
                 type: string
                 pattern: '^[a-zA-Z0-9_.]*$'
                 minLength: 3
                 maxLength: 16
                 example: Maria
+                description: User's username.
           minItems: 1
           maxItems: 1000
+          description: List of Users.
         nextUsersPageId: 
           type: integer
           minimum: 1
@@ -678,6 +695,7 @@ components:
         message:
           type: string
           example: Resource created
+          description: Success message.
     file: 
       title: File
       description: |
