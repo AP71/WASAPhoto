@@ -105,7 +105,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/success'
+                $ref: '#/components/schemas/users'
         '401':
           description: |
             Unauthorized access.
@@ -467,6 +467,7 @@ paths:
           in: query
           schema:
             type: integer
+            description: Page identifier.
           required: false
       responses:
         '200':
