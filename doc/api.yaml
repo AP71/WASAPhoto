@@ -38,7 +38,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/success'              
+                $ref: '#/components/schemas/identifier'              
   /profile:
     get:
       tags: ["Interactions with other users"]
@@ -49,23 +49,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: username
-          in: query
-          schema: 
-            type: string
-            minLength: 3
-            maxLength: 16
-            pattern: '^[a-zA-Z0-9_.]*$'
-            example: Maria
-          description: User username.
-          required: true
-        - name: usersPageId
-          in: query
-          schema:
-              type: integer
-              example: 1
-          description: Result page number.
-          required: false
+        - {$ref: '#/components/parameters/userToSearch'}
+        - {$ref: '#/components/parameters/pageId'}
       responses:
         '200':
           description: |
@@ -148,8 +133,7 @@ paths:
         content:
           image/*:
             schema:
-              type: string
-              format: binary            
+              $ref: '#/components/schemas/file'          
         required: true
       responses:
         '201':
@@ -207,6 +191,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             User not found.
@@ -225,6 +212,9 @@ paths:
         '204':
           description: |
             User unbanned successfully.
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             User not found.
@@ -251,6 +241,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '401':
+          description: |
+            Unauthorized access.
         '404':
           description: |
             User not found.
@@ -288,12 +281,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: pageId
-          in: query
-          schema: 
-            type: integer
-          description: Id of the page to retrive.
-          required: false
+        - {$ref: '#/components/parameters/pageId'}
       responses:
         '200':
           description: |
@@ -302,6 +290,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/feedPhoto'
+        '204':
+          description: |
+            There isn't any image to show.
+        '401':
+          description: |
+            Unauthorized access.
+  /feed/{photo}: 
+    parameters:
+      - {$ref: '#components/parameters/photoId'}
+    get:
+      tags: ["Feed operations"]
+      summary: Retrive a photo.
+      description: |
+        Retrieves a photo that match with the photoId passed in input.
+      operationId: getPhoto
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: |
+            Obtain an image.
+          content:
+            image/*:
+              schema:
+                $ref: '#/components/schemas/file'
         '204':
           description: |
             There isn't any image to show.
@@ -421,18 +434,8 @@ paths:
             Photo not found.
   /feed/{photoId}/comments:
     parameters:
-    - name: photoId
-      in: path
-      schema:
-        type: integer
-        description: Photo identifier.
-      required: true
-    - name: pageId
-      in: query
-      schema:
-        type: integer
-        description: Page identifier.
-      required: false
+    - {$ref: '#components/parameters/photoId'}
+    - {$ref: '#components/parameters/pageId'}
     get:
       tags: ["Feed operations"]
       summary: Retrive comments
@@ -489,6 +492,21 @@ components:
       required: true
       schema:
         type: integer
+    userToSearch:
+      description: User to search.
+      name: userToSearch
+      in: query
+      required: true
+      schema:
+        type: string
+    pageId:
+      description: Page identifier.
+      name: pageId
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
   schemas:  
     userProfile:
       title: User's Profile
@@ -496,13 +514,15 @@ components:
         Represents user profile, including followers, following, number of posts and photos.
       type: object
       properties:
-        id: 
+        id:
           type: string
-          example: abcdef012345
-          description: User identifier.
+          minLength: 36
+          maxLength: 36
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: User identifier (uuid).
         username:
           type: string
-          pattern: '^[a-zA-Z0-9_.]*$'
+          pattern: '^[a-zA-Z0-9_.]'
           minLength: 3
           maxLength: 16
           example: Maria
@@ -510,7 +530,11 @@ components:
         photos:
           type: array
           items:
-            $ref: '#/components/schemas/postsExample'
+            properties:
+              id:
+                type: integer
+                example: 1452
+                minimum: 0
           minItems: 1
           maxItems: 1000
           description: List of photos.
@@ -537,7 +561,7 @@ components:
       properties:
         newUsername:
           type: string
-          pattern: '^[a-zA-Z0-9_.]*$'
+          pattern: '^[a-zA-Z0-9_.]'
           minLength: 3
           maxLength: 16
           example: Maria
@@ -555,18 +579,20 @@ components:
             properties:
               idUser:
                 type: string
-                example: abcdef012345
+                example: 123e4567-e89b-12d3-a456-426614174000
+                minLength: 36
+                maxLength: 36
                 description: User identifier.
               username: 
                 type: string
-                pattern: '^[a-zA-Z0-9_.]*$'
+                pattern: '^[a-zA-Z0-9_.]'
                 minLength: 3
                 maxLength: 16
                 example: Maria
                 description: User's username.
               commentId: 
-                type: string
-                example: ff3r84vr
+                type: integer
+                example: 3432
                 description: Comment identifier.
               data:
                 type: string
@@ -594,7 +620,7 @@ components:
       properties:
         text:
           type: string
-          pattern: '^[a-zA-Z0-9_., !?:;""$%&€()[{}]]*$'
+          pattern: '^[a-zA-Z0-9_., !?:;""$%&€()[{}]'
           minLength: 1
           maxLength: 250
           example: Bella foto!!
@@ -624,8 +650,9 @@ components:
       type: object
       properties:
         id: 
-          type: string
-          example: ff3r84vr
+          type: integer
+          example: 5432
+          minimum: 0
           description: Photo identifier.
         data:
           type: string
@@ -634,6 +661,8 @@ components:
           example: "2022-01-01T00:00:00Z"
         photo:  
           type: integer
+          example: 5432
+          minimum: 0
           description: File identifier.
         numberOfLikes:
           type: integer
@@ -653,7 +682,7 @@ components:
       properties:
         username:
           type: string
-          pattern: '^[a-zA-Z0-9_.]*$'
+          pattern: '^[a-zA-Z0-9_.]'
           minLength: 3
           maxLength: 16
           example: Maria
@@ -670,11 +699,13 @@ components:
             properties:
               id:
                 type: string
-                example: abcdef012345
+                example: 123e4567-e89b-12d3-a456-426614174000
+                minLength: 32
+                maxLength: 32
                 description: User's identifier.
               username:
                 type: string
-                pattern: '^[a-zA-Z0-9_.]*$'
+                pattern: '^[a-zA-Z0-9_.]'
                 minLength: 3
                 maxLength: 16
                 example: Maria
@@ -697,4 +728,18 @@ components:
           type: string
           example: Resource created
           description: Success message.
-              
+    identifier:
+      title: User identifier.
+      type: object
+      properties:
+        identifier:
+          type: string
+          minLength: 36
+          maxLength: 36
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: User identifier (uuid).
+    file:
+      title: Image.
+      description: Represents an image.
+      type: string
+      format: binary   
