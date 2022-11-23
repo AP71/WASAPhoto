@@ -64,7 +64,7 @@ paths:
             Unauthorized access.
   /profile/{username}:
     parameters:
-      - {$ref: '#components/parameters/username'}
+      - {$ref: '#/components/parameters/username'}
     put:
       tags: ["Profile operations"]
       summary: Changes the username
@@ -119,7 +119,7 @@ paths:
             User not found.    
   /profile/{username}/photos:  
     parameters:
-      - {$ref: '#components/parameters/username'}
+      - {$ref: '#/components/parameters/username'}
     post:
       tags: ["Profile operations"]
       summary: Upload a new photo
@@ -173,8 +173,8 @@ paths:
             Unauthorized access.
   /profile/{username}/banned/{bannedUsername}:
     parameters:
-      - {$ref: '#components/parameters/username'}
-      - {$ref: '#components/parameters/bannedUsername'}
+      - {$ref: '#/components/parameters/username'}
+      - {$ref: '#/components/parameters/bannedUsername'}
     put:
       tags: ["Interactions with other users"]
       summary: Ban another user
@@ -223,8 +223,8 @@ paths:
             This user wasn't banned from you.
   /search/{username}/following/{followedUsername}:
     parameters:
-      - {$ref: '#components/parameters/username'}
-      - {$ref: '#components/parameters/followedUsername'}
+      - {$ref: '#/components/parameters/username'}
+      - {$ref: '#/components/parameters/followedUsername'}
     put:
       tags: ["Interactions with other users"]
       summary: Follow a user
@@ -298,7 +298,7 @@ paths:
             Unauthorized access.
   /feed/{photo}: 
     parameters:
-      - {$ref: '#components/parameters/photoId'}
+      - {$ref: '#/components/parameters/photoId'}
     get:
       tags: ["Feed operations"]
       summary: Retrive a photo.
@@ -323,8 +323,8 @@ paths:
             Unauthorized access.
   /feed/{photo}/like/{username}:
     parameters:
-      - {$ref: '#components/parameters/photoId'}
-      - {$ref: '#components/parameters/username'}
+      - {$ref: '#/components/parameters/photoId'}
+      - {$ref: '#/components/parameters/username'}
     put:
       tags: ["Feed operations"]
       summary: Place a like
@@ -373,8 +373,8 @@ paths:
             You didn't place a like on this photo.
   /feed/{photo}/comment/{username}:
     parameters:
-      - {$ref: '#components/parameters/photoId'}
-      - {$ref: '#components/parameters/username'}
+      - {$ref: '#/components/parameters/photoId'}
+      - {$ref: '#/components/parameters/username'}
     post:
       tags: ["Feed operations"]
       summary: Place a comment
@@ -388,7 +388,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/comment'
+              $ref: '#/components/schemas/textComment'
         required: true
       responses:
         '201':
@@ -434,8 +434,8 @@ paths:
             Photo not found.
   /feed/{photoId}/comments:
     parameters:
-    - {$ref: '#components/parameters/photoId'}
-    - {$ref: '#components/parameters/pageId'}
+    - {$ref: '#/components/parameters/photoId'}
+    - {$ref: '#/components/parameters/pageId'}
     get:
       tags: ["Feed operations"]
       summary: Retrive comments
@@ -471,6 +471,9 @@ components:
       required: true
       schema:
         type: string
+        pattern: '^[a-zA-Z0-9_.]' 
+        minLength: 3
+        maxLength: 16
     bannedUsername:
       description: Banned user's name.
       name: bannedUsername
@@ -478,6 +481,9 @@ components:
       required: true
       schema:
         type: string
+        pattern: '^[a-zA-Z0-9_.]' 
+        minLength: 3
+        maxLength: 16
     followedUsername:
       description: Followed username.
       name: followedUsername
@@ -485,6 +491,9 @@ components:
       required: true
       schema:
         type: string
+        pattern: '^[a-zA-Z0-9_.]' 
+        minLength: 3
+        maxLength: 16
     photoId:
       description: Photo identifier.
       name: photoId
@@ -499,6 +508,9 @@ components:
       required: true
       schema:
         type: string
+        pattern: '^[a-zA-Z0-9_.]' 
+        minLength: 3
+        maxLength: 16
     pageId:
       description: Page identifier.
       name: pageId
@@ -535,6 +547,7 @@ components:
                 type: integer
                 example: 1452
                 minimum: 0
+                description: Photo identifier.
           minItems: 1
           maxItems: 1000
           description: List of photos.
@@ -576,35 +589,7 @@ components:
           description: List of comments.
           type: array
           items:
-            properties:
-              idUser:
-                type: string
-                example: 123e4567-e89b-12d3-a456-426614174000
-                minLength: 36
-                maxLength: 36
-                description: User identifier.
-              username: 
-                type: string
-                pattern: '^[a-zA-Z0-9_.]'
-                minLength: 3
-                maxLength: 16
-                example: Maria
-                description: User's username.
-              commentId: 
-                type: integer
-                example: 3432
-                description: Comment identifier.
-              data:
-                type: string
-                format: date-time
-                example: "2022-01-01T00:00:00Z"
-                description: Upload date.
-              text:  
-                type: string
-                minLength: 1
-                maxLength: 250
-                example: Bella foto!!
-                description: Comment text.
+            $ref: '#/components/schemas/comment'
           minItems: 1
           maxItems: 10
         nextCommentPageId:
@@ -612,7 +597,38 @@ components:
           minimum: 1
           example: 2
           description: Id of the next page of comments.
-    comment:
+    comment: 
+      type: object
+      properties:
+        idUser:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          minLength: 36
+          maxLength: 36
+          description: User identifier.
+        username: 
+          type: string
+          pattern: '^[a-zA-Z0-9_.]'
+          minLength: 3
+          maxLength: 16
+          example: Maria
+          description: User's username.
+        commentId: 
+          type: integer
+          example: 3432
+          description: Comment identifier.
+        data:
+          type: string
+          format: date-time
+          example: "2022-01-01T00:00:00Z"
+          description: Upload date.
+        text:  
+          type: string
+          minLength: 1
+          maxLength: 250
+          example: Bella foto!!
+          description: Comment text.
+    textComment:
       title: Comment example
       description: |
         Represents one comment.
@@ -687,31 +703,36 @@ components:
           maxLength: 16
           example: Maria
           description: User's username.
+    user:  
+      title: User
+      description: Represents an identifier and a username for one user.
+      type: object
+      properties:
+        id:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          minLength: 32
+          maxLength: 32
+          description: User's identifier.
+        username:
+          type: string
+          pattern: '^[a-zA-Z0-9_.]'
+          minLength: 3
+          maxLength: 16
+          example: Maria
+          description: User's username.
     users:
       title: List of users
       description: |
-        Represents an object that includes a list of 10 photos and the number of the next page of itmes.
+        Represents an object that includes a list of 10 user.
       type: object
       properties: 
         users:
           type: array
           items:
-            properties:
-              id:
-                type: string
-                example: 123e4567-e89b-12d3-a456-426614174000
-                minLength: 32
-                maxLength: 32
-                description: User's identifier.
-              username:
-                type: string
-                pattern: '^[a-zA-Z0-9_.]'
-                minLength: 3
-                maxLength: 16
-                example: Maria
-                description: User's username.
+            $ref: '#/components/schemas/user'
           minItems: 1
-          maxItems: 1000
+          maxItems: 10
           description: List of Users.
         nextUsersPageId: 
           type: integer
@@ -730,6 +751,7 @@ components:
           description: Success message.
     identifier:
       title: User identifier.
+      description: Represents the user identifier.
       type: object
       properties:
         identifier:
