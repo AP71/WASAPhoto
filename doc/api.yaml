@@ -296,7 +296,7 @@ paths:
         '401':
           description: |
             Unauthorized access.
-  /feed/{photo}: 
+  /feed/{photoId}: 
     parameters:
       - {$ref: '#/components/parameters/photoId'}
     get:
@@ -321,7 +321,7 @@ paths:
         '401':
           description: |
             Unauthorized access.
-  /feed/{photo}/like/{username}:
+  /feed/{photoId}/like/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
       - {$ref: '#/components/parameters/username'}
@@ -371,7 +371,7 @@ paths:
         '409':
           description: |
             You didn't place a like on this photo.
-  /feed/{photo}/comment/{username}:
+  /feed/{photoId}/comment/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
       - {$ref: '#/components/parameters/username'}
@@ -470,30 +470,21 @@ components:
       in: path
       required: true
       schema:
-        type: string
-        pattern: '^[a-zA-Z0-9_.]' 
-        minLength: 3
-        maxLength: 16
+        $ref: '#/components/schemas/stringUsername'
     bannedUsername:
       description: Banned user's name.
       name: bannedUsername
       in: path
       required: true
       schema:
-        type: string
-        pattern: '^[a-zA-Z0-9_.]' 
-        minLength: 3
-        maxLength: 16
+        $ref: '#/components/schemas/stringUsername'
     followedUsername:
       description: Followed username.
       name: followedUsername
       in: path
       required: true
       schema:
-        type: string
-        pattern: '^[a-zA-Z0-9_.]' 
-        minLength: 3
-        maxLength: 16
+        $ref: '#/components/schemas/stringUsername'
     photoId:
       description: Photo identifier.
       name: photoId
@@ -507,10 +498,7 @@ components:
       in: query
       required: true
       schema:
-        type: string
-        pattern: '^[a-zA-Z0-9_.]' 
-        minLength: 3
-        maxLength: 16
+        $ref: '#/components/schemas/stringUsername'
     pageId:
       description: Page identifier.
       name: pageId
@@ -520,6 +508,19 @@ components:
         type: integer
         minimum: 0
   schemas:  
+    stringUsername:
+      type: string
+      pattern: '^[a-zA-Z0-9_.]' 
+      minLength: 3
+      maxLength: 16
+      example: Maria
+      description: User's username.
+    stringIdentifier:
+      type: string
+      minLength: 36
+      maxLength: 36
+      example: 123e4567-e89b-12d3-a456-426614174000
+      description: User identifier (uuid).
     userProfile:
       title: User's Profile
       description: |
@@ -527,18 +528,9 @@ components:
       type: object
       properties:
         id:
-          type: string
-          minLength: 36
-          maxLength: 36
-          example: 123e4567-e89b-12d3-a456-426614174000
-          description: User identifier (uuid).
+          $ref: '#/components/schemas/stringIdentifier'
         username:
-          type: string
-          pattern: '^[a-zA-Z0-9_.]'
-          minLength: 3
-          maxLength: 16
-          example: Maria
-          description: User's username.
+          $ref: '#/components/schemas/stringUsername'
         photos:
           type: array
           items:
@@ -601,18 +593,9 @@ components:
       type: object
       properties:
         idUser:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
-          minLength: 36
-          maxLength: 36
-          description: User identifier.
+          $ref: '#/components/schemas/stringIdentifier'
         username: 
-          type: string
-          pattern: '^[a-zA-Z0-9_.]'
-          minLength: 3
-          maxLength: 16
-          example: Maria
-          description: User's username.
+          $ref: '#/components/schemas/stringUsername'
         commentId: 
           type: integer
           example: 3432
@@ -697,30 +680,16 @@ components:
       type: object
       properties:
         username:
-          type: string
-          pattern: '^[a-zA-Z0-9_.]'
-          minLength: 3
-          maxLength: 16
-          example: Maria
-          description: User's username.
+          $ref: '#/components/schemas/stringUsername'
     user:  
       title: User
       description: Represents an identifier and a username for one user.
       type: object
       properties:
         id:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
-          minLength: 32
-          maxLength: 32
-          description: User's identifier.
+          $ref: '#/components/schemas/stringIdentifier'
         username:
-          type: string
-          pattern: '^[a-zA-Z0-9_.]'
-          minLength: 3
-          maxLength: 16
-          example: Maria
-          description: User's username.
+          $ref: '#/components/schemas/stringUsername'
     users:
       title: List of users
       description: |
@@ -755,11 +724,7 @@ components:
       type: object
       properties:
         identifier:
-          type: string
-          minLength: 36
-          maxLength: 36
-          example: 123e4567-e89b-12d3-a456-426614174000
-          description: User identifier (uuid).
+          $ref: '#/components/schemas/stringIdentifier'
     file:
       title: Image.
       description: Represents an image.
