@@ -521,6 +521,12 @@ components:
       maxLength: 36
       example: 123e4567-e89b-12d3-a456-426614174000
       description: User identifier (uuid).
+    integerPhoto:
+      type: integer
+      example: 1452
+      minimum: 0
+      maximum: 1000000
+      description: Photo identifier.
     userProfile:
       title: User's Profile
       description: |
@@ -534,12 +540,7 @@ components:
         photos:
           type: array
           items:
-            properties:
-              id:
-                type: integer
-                example: 1452
-                minimum: 0
-                description: Photo identifier.
+            $ref: '#/components/schemas/integerPhoto'
           minItems: 1
           maxItems: 1000
           description: List of photos.
@@ -565,12 +566,7 @@ components:
       type: object
       properties:
         newUsername:
-          type: string
-          pattern: '^[a-zA-Z0-9_.]'
-          minLength: 3
-          maxLength: 16
-          example: Maria
-          description: New username value.
+          $ref: '#/components/schemas/stringUsername'
     comments:
       title: List of comments 
       description: |
@@ -648,21 +644,13 @@ components:
         Represents one post.
       type: object
       properties:
-        id: 
-          type: integer
-          example: 5432
-          minimum: 0
-          description: Photo identifier.
         data:
           type: string
           format: date-time
           description: Upload date
           example: "2022-01-01T00:00:00Z"
         photo:  
-          type: integer
-          example: 5432
-          minimum: 0
-          description: File identifier.
+          $ref: '#/components/schemas/integerPhoto'
         numberOfLikes:
           type: integer
           example: 540
