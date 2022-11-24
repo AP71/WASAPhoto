@@ -189,10 +189,10 @@ paths:
         '5XX':
           description: |
             Internal server error.
-  /profile/{username}/banned/{bannedUsername}:
+  /profile/{username}/banned/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
-      - {$ref: '#/components/parameters/bannedUsername'}
+      - {$ref: '#/components/parameters/byUsername'}
     put:
       tags: ["Interactions with other users"]
       summary: Ban another user
@@ -245,10 +245,10 @@ paths:
         '5XX':
           description: |
             Internal server error.
-  /search/{username}/following/{followedUsername}:
+  /search/{username}/followed/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
-      - {$ref: '#/components/parameters/followedUsername'}
+      - {$ref: '#/components/parameters/byUsername'}
     put:
       tags: ["Interactions with other users"]
       summary: Follow a user
@@ -357,7 +357,7 @@ paths:
         '5XX':
           description: |
             Internal server error.
-  /feed/{photoId}/like/{username}:
+  /feed/{photoId}/likes/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
       - {$ref: '#/components/parameters/username'}
@@ -413,7 +413,7 @@ paths:
         '5XX':
           description: |
             Internal server error.
-  /feed/{photoId}/comment/{username}:
+  /feed/{photoId}/comments/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
       - {$ref: '#/components/parameters/username'}
@@ -522,16 +522,9 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/stringUsername'
-    bannedUsername:
-      description: Banned user's name.
-      name: bannedUsername
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/stringUsername'
-    followedUsername:
-      description: Followed username.
-      name: followedUsername
+    byUsername:
+      description: User that do the action.
+      name: byUsername
       in: path
       required: true
       schema:
