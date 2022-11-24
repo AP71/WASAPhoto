@@ -718,3 +718,5 @@ components:
       description: Represents an image.
       type: string
       format: binary   
+      minLength: 0
+      maxLength: 8388608
