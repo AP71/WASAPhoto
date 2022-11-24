@@ -34,11 +34,14 @@ paths:
       responses:
         '201':
           description: |
-              User log-in action successful
+            User log-in action successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/identifier'              
+                $ref: '#/components/schemas/identifier'     
+        '5XX':
+          description: |
+            Internal server error.
   /profile:
     get:
       tags: ["Interactions with other users"]
@@ -62,6 +65,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
   /profile/{username}:
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -95,6 +101,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
     get:
       tags: ["Interactions with other users"]
       summary: Retrive a user's profile
@@ -117,6 +126,9 @@ paths:
         '404':
           description: |
             User not found.    
+        '5XX':
+          description: |
+            Internal server error.
   /profile/{username}/photos:  
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -149,6 +161,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
   /profile/{username}/photos/{photoId}:  
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -171,6 +186,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
   /profile/{username}/banned/{bannedUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -200,6 +218,9 @@ paths:
         '409':
           description: |
             This user was already banned by you.
+        '5XX':
+          description: |
+            Internal server error.
     delete:
       tags: ["Interactions with other users"]
       summary: Unban another user
@@ -221,6 +242,9 @@ paths:
         '409':
           description: |
             This user wasn't banned from you.
+        '5XX':
+          description: |
+            Internal server error.
   /search/{username}/following/{followedUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -250,6 +274,9 @@ paths:
         '409':
           description: |
             Unable to follow this user (you already follow he).
+        '5XX':
+          description: |
+            Internal server error.
     delete:
       tags: ["Interactions with other users"]
       summary: Unfollow a user
@@ -271,6 +298,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
   /feed:
     get:
       tags: ["Feed operations"]
@@ -296,6 +326,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
   /feed/{photoId}: 
     parameters:
       - {$ref: '#/components/parameters/photoId'}
@@ -321,6 +354,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
   /feed/{photoId}/like/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
@@ -350,6 +386,9 @@ paths:
         '409':
           description: |
             Like already placed on this photo.
+        '5XX':
+          description: |
+            Internal server error.
     delete:
       tags: ["Feed operations"]
       summary: Unplace a like
@@ -371,6 +410,9 @@ paths:
         '409':
           description: |
             You didn't place a like on this photo.
+        '5XX':
+          description: |
+            Internal server error.
   /feed/{photoId}/comment/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
@@ -404,6 +446,9 @@ paths:
         '404':
           description: |
             Photo not found.
+        '5XX':
+          description: |
+            Internal server error.
     delete:
       tags: ["Feed operations"]
       summary: Unplace a comment
@@ -432,6 +477,9 @@ paths:
         '404':
           description: |
             Photo not found.
+        '5XX':
+          description: |
+            Internal server error.
   /feed/{photoId}/comments:
     parameters:
     - {$ref: '#/components/parameters/photoId'}
@@ -458,6 +506,9 @@ paths:
         '401':
           description: |
             Unauthorized access.
+        '5XX':
+          description: |
+            Internal server error.
 components:
   securitySchemes:
     bearerAuth:
