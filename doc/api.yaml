@@ -9,11 +9,11 @@ tags:
   - name: "Login"
     description: "Login operations"
   - name: "Profile operations"
-    description: "Profile operations"
+    description: "Allows users to change their username and upload/delete their photos"
   - name: "Interactions with other users"
-    description: "Social operations"
+    description: "Allows users to search for other users, follow, ban and recover their profile"
   - name: "Feed operations"
-    description: "Feed operations"
+    description: "Allows users to fetch the photo feed, add/remove likes and add/remove/view comments"
 paths:
   /session:
     post:
@@ -38,7 +38,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/identifier'     
+                $ref: '#/components/schemas/identifier'    
+        '400':
+          description: |
+            Incorrect message formatting. 
         '5XX':
           description: |
             Internal server error.
@@ -62,6 +65,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -95,6 +101,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/username'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '409':
           description: |
             This username is already used by another user.
@@ -120,6 +129,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userProfile'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -155,6 +167,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '415':
           description: |
             File format not supported.
@@ -180,6 +195,9 @@ paths:
         '204':
           description: |
             File deleted successfully.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '404':
           description: |
             File not found.
@@ -209,6 +227,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -233,6 +254,9 @@ paths:
         '204':
           description: |
             User unbanned successfully.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -265,6 +289,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -289,6 +316,9 @@ paths:
         '204':
           description: |
             User unfollowed successfully.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '404':
           description: |
             User not found.
@@ -323,6 +353,9 @@ paths:
         '204':
           description: |
             There isn't any image to show.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -351,6 +384,9 @@ paths:
         '204':
           description: |
             There isn't any image to show.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -377,6 +413,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -401,6 +440,9 @@ paths:
         '204':
           description: |
             Like unplaced successfully.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -440,6 +482,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -471,6 +516,9 @@ paths:
         '204':
           description: |
             Comment unplaced successfully.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -503,6 +551,9 @@ paths:
         '204':
           description: |
             There aren't any comment to retrive.
+        '400':
+          description: |
+            Incorrect message formatting. 
         '401':
           description: |
             Unauthorized access.
@@ -554,7 +605,7 @@ components:
   schemas:  
     stringUsername:
       type: string
-      pattern: '^[a-zA-Z0-9_.]' 
+      pattern: '^[a-zA-Z0-9_.]*$' 
       minLength: 3
       maxLength: 16
       example: Maria
@@ -569,7 +620,6 @@ components:
       type: integer
       example: 1452
       minimum: 0
-      maximum: 1000000
       description: Photo identifier.
     userProfile:
       title: User's Profile
@@ -659,7 +709,7 @@ components:
       properties:
         text:
           type: string
-          pattern: '^[a-zA-Z0-9_., !?:;""$%&€()[{}]'
+          pattern: '^[a-zA-Z0-9_., !?:;""$%&€()[{}]*$'
           minLength: 1
           maxLength: 250
           example: Bella foto!!
