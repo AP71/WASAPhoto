@@ -39,12 +39,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/identifier'    
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '5XX':
-          description: |
-            Internal server error.
+        '400': {$ref: '#/components/responses/badRequest'}
+        '5XX': {$ref: '#/components/responses/serverError'}
   /profile:
     get:
       tags: ["Interactions with other users"]
@@ -65,15 +61,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /profile/{username}:
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -101,18 +91,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/username'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '409':
-          description: |
-            This username is already used by another user.
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '403':  {$ref: '#/components/responses/forbiddenAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     get:
       tags: ["Interactions with other users"]
       summary: Retrive a user's profile
@@ -129,18 +112,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userProfile'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            User not found.    
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /profile/{username}/photos:  
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -167,18 +142,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '415':
-          description: |
-            File format not supported.
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '415':  {$ref: '#/components/responses/fileNotSupported'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /profile/{username}/photos/{photoId}:  
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -195,18 +162,10 @@ paths:
         '204':
           description: |
             File deleted successfully.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '404':
-          description: |
-            File not found.
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /profile/{username}/banned/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -227,21 +186,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            User not found.
-        '409':
-          description: |
-            This user was already banned by you.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     delete:
       tags: ["Interactions with other users"]
       summary: Unban another user
@@ -254,21 +203,11 @@ paths:
         '204':
           description: |
             User unbanned successfully.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            User not found.
-        '409':
-          description: |
-            This user wasn't banned from you.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /search/{username}/followed/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
@@ -289,21 +228,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            User not found.
-        '409':
-          description: |
-            Unable to follow this user (you already follow he).
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     delete:
       tags: ["Interactions with other users"]
       summary: Unfollow a user
@@ -316,21 +245,11 @@ paths:
         '204':
           description: |
             User unfollowed successfully.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '404':
-          description: |
-            User not found.
-        '409':
-          description: |
-            Unable to unfollow this user (you don't follow this user).
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /feed:
     get:
       tags: ["Feed operations"]
@@ -353,15 +272,9 @@ paths:
         '204':
           description: |
             There isn't any image to show.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /feed/{photoId}: 
     parameters:
       - {$ref: '#/components/parameters/photoId'}
@@ -384,15 +297,9 @@ paths:
         '204':
           description: |
             There isn't any image to show.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /feed/{photoId}/likes/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
@@ -413,21 +320,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            Photo not found.
-        '409':
-          description: |
-            Like already placed on this photo.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     delete:
       tags: ["Feed operations"]
       summary: Unplace a like
@@ -440,21 +337,11 @@ paths:
         '204':
           description: |
             Like unplaced successfully.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            Photo not found.
-        '409':
-          description: |
-            You didn't place a like on this photo.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '409':  {$ref: '#/components/responses/conflictError'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /feed/{photoId}/comments/{username}:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
@@ -482,18 +369,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            Photo not found.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     delete:
       tags: ["Feed operations"]
       summary: Unplace a comment
@@ -516,18 +395,10 @@ paths:
         '204':
           description: |
             Comment unplaced successfully.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '404':
-          description: |
-            Photo not found.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}  
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
   /feed/{photoId}/comments:
     parameters:
     - {$ref: '#/components/parameters/photoId'}
@@ -551,15 +422,9 @@ paths:
         '204':
           description: |
             There aren't any comment to retrive.
-        '400':
-          description: |
-            Incorrect message formatting. 
-        '401':
-          description: |
-            Unauthorized access.
-        '5XX':
-          description: |
-            Internal server error.
+        '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
 components:
   securitySchemes:
     bearerAuth:
@@ -604,6 +469,7 @@ components:
         minimum: 0
   schemas:  
     stringUsername:
+      title: Username info
       type: string
       pattern: '^[a-zA-Z0-9_.]*$' 
       minLength: 3
@@ -611,12 +477,14 @@ components:
       example: Maria
       description: User's username.
     stringIdentifier:
+      title: User identifier info
       type: string
       minLength: 36
       maxLength: 36
       example: 123e4567-e89b-12d3-a456-426614174000
       description: User identifier (uuid).
     integerPhoto:
+      title: Photo identifier info
       type: integer
       example: 1452
       minimum: 0
@@ -680,6 +548,7 @@ components:
           example: 2
           description: Id of the next page of comments.
     comment: 
+      title: Full comment example
       type: object
       properties:
         idUser:
@@ -801,16 +670,71 @@ components:
           example: Resource created
           description: Success message.
     identifier:
-      title: User identifier.
+      title: User identifier
       description: Represents the user identifier.
       type: object
       properties:
         identifier:
           $ref: '#/components/schemas/stringIdentifier'
     file:
-      title: Image.
+      title: Image
       description: Represents an image.
       type: string
       format: binary   
       minLength: 0
       maxLength: 8388608
+    errorMessage:
+      title: Error message.
+      type: object
+      properties:
+        message: 
+          type: string
+          pattern: '^[a-zA-Z0-9_;,:?!()[].]*$'
+          example: Error message.
+          minLength: 0
+          maxLength: 50
+  responses:
+    badRequest:
+      description: Incorrect message formatting. 
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+    unauthAccess:
+      description: Unauthorized access.
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+    forbiddenAccess:
+      description: Forbidden access.
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+    conflictError:
+      description: Conflict error. 
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+    serverError:
+      description: Internal server error. 
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+    notFoundError:
+      description: Not found. 
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+    fileNotSupported:
+      description: File format not supported.
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/errorMessage'
+
+    
