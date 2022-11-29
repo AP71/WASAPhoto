@@ -607,13 +607,15 @@ components:
         Represents one post.
       type: object
       properties:
+        photo:  
+          $ref: '#/components/schemas/integerPhoto'
         data:
           type: string
           format: date-time
           description: Upload date
           example: "2022-01-01T00:00:00Z"
-        photo:  
-          $ref: '#/components/schemas/integerPhoto'
+        user:
+          $ref: '#/components/schemas/stringIdentifier'
         numberOfLikes:
           type: integer
           example: 540
