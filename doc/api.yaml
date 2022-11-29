@@ -208,7 +208,7 @@ paths:
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '409':  {$ref: '#/components/responses/conflictError'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /search/{username}/followed/{byUsername}:
+  /profile/{username}/followed/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
       - {$ref: '#/components/parameters/byUsername'}
