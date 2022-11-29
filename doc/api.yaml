@@ -102,6 +102,8 @@ paths:
       description: |
         Returns the profile of the user passed as input in the path.
       operationId: getUserProfile
+      parameters:
+        - {$ref: '#/components/parameters/pageId'}
       security:
         - bearerAuth: []
       responses:
@@ -142,7 +144,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':  {$ref: '#/components/responses/badRequest'}
         '415':  {$ref: '#/components/responses/fileNotSupported'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
@@ -504,8 +505,13 @@ components:
           items:
             $ref: '#/components/schemas/integerPhoto'
           minItems: 1
-          maxItems: 1000
+          maxItems: 10
           description: List of photos.
+        nextPhotosPageId:
+          type: integer
+          example: 3
+          minimum: 0
+          description: Represents the next page's id of photos.
         followers:
           type: integer
           example: 3543
