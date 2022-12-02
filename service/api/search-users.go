@@ -44,7 +44,7 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(users)
+	err = json.NewEncoder(w).Encode(&users)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "UpdateUsername return an error.", http.StatusInternalServerError, "Internal server error")
 		return

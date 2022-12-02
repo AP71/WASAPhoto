@@ -27,8 +27,8 @@ type UserData struct {
 }
 
 type Users struct {
-	List            [10]UserData `json:"users"`
-	NextUsersPageId int64        `json:"nextUsersPageId"`
+	List            []UserData `json:"users"`
+	NextUsersPageId int64      `json:"nextUsersPageId"`
 }
 
 func CheckUsername(s string) bool {

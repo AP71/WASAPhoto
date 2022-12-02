@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
@@ -33,6 +34,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		user.Id.Value, err = rt.db.CreateUser(user.Username.Value)
 		if err != nil {
 			errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
+			fmt.Println(err)
 			return
 		}
 	}

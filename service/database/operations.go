@@ -72,6 +72,14 @@ func (db *appdbimpl) DeleteFile(file structures.PhotoID) error {
 
 func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) (structures.Users, error) {
 	var usersList structures.Users
+	var num int64
+
+	err := db.c.QueryRow(`SELECT COUNT(Id) 
+							FROM Users 
+							WHERE Username != "` + except + `" AND Username LIKE '%` + userToSearch + `%';`).Scan(&num)
+	if err != nil {
+		return structures.Users{}, err
+	}
 
 	rows, err := db.c.Query(`SELECT Id, Username 
 								FROM Users 
@@ -81,6 +89,10 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 		return structures.Users{}, err
 	}
 
+	if num <= 10 {
+		usersList.NextUsersPageId = 0
+		usersList.List = make([]structures.UserData, num)
+	}
 	i := 0
 	for rows.Next() {
 		err = rows.Scan(&usersList.List[i].Id, &usersList.List[i].Username)
