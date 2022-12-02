@@ -89,11 +89,16 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 		return structures.Users{}, err
 	}
 
-	if num <= 10 {
+	if num <= 10+(pageId*10) {
 		usersList.NextUsersPageId = 0
-		usersList.List = make([]structures.UserData, num)
+		num = num % 10
+	} else {
+		usersList.NextUsersPageId = pageId + 1
+		num = 10
 	}
+
 	i := 0
+	usersList.List = make([]structures.UserData, num)
 	for rows.Next() {
 		err = rows.Scan(&usersList.List[i].Id, &usersList.List[i].Username)
 		if err != nil {
