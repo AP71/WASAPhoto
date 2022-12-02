@@ -41,7 +41,7 @@ paths:
                 $ref: '#/components/schemas/identifier'    
         '400': {$ref: '#/components/responses/badRequest'}
         '5XX': {$ref: '#/components/responses/serverError'}
-  /profile:
+  /profile/:
     get:
       tags: ["Interactions with other users"]
       summary: Search users
@@ -64,7 +64,7 @@ paths:
         '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}:
+  /profile/{username}/:
     parameters:
       - {$ref: '#/components/parameters/username'}
     put:
@@ -118,7 +118,7 @@ paths:
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/photos:  
+  /profile/{username}/photos/:  
     parameters:
       - {$ref: '#/components/parameters/username'}
     post:
@@ -251,7 +251,7 @@ paths:
         '409':  {$ref: '#/components/responses/conflictError'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /feed:
+  /feed/:
     get:
       tags: ["Feed operations"]
       summary: Retrive photo stream
@@ -276,7 +276,7 @@ paths:
         '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /feed/{photoId}: 
+  /feed/{photoId}/: 
     parameters:
       - {$ref: '#/components/parameters/photoId'}
     get:
@@ -400,7 +400,7 @@ paths:
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /feed/{photoId}/comments:
+  /feed/{photoId}/comments/:
     parameters:
     - {$ref: '#/components/parameters/photoId'}
     - {$ref: '#/components/parameters/pageId'}
