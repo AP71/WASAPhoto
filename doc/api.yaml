@@ -114,7 +114,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userProfile'
-        '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '5XX':  {$ref: '#/components/responses/serverError'}
@@ -503,7 +502,9 @@ components:
         photos:
           type: array
           items:
-            $ref: '#/components/schemas/integerPhoto'
+            properties:
+              photoId:
+                $ref: '#/components/schemas/integerPhoto'
           minItems: 1
           maxItems: 10
           description: List of photos.

@@ -108,3 +108,60 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 	}
 	return usersList, nil
 }
+
+func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.UserPage, error) {
+	var user structures.UserPage
+
+	err := db.c.QueryRow(`SELECT u.Id, u.Username, COUNT(p.Id) 
+									FROM Users AS u LEFT JOIN Photo AS p ON u.Id=p.User
+									WHERE Username="`+username+`";`).Scan(&user.Id, &user.Username, &user.PhotoCounter)
+	if err != nil {
+		return structures.UserPage{}, err
+	}
+
+	err = db.c.QueryRow(`SELECT COUNT(*) 
+								FROM Users AS u JOIN Follows AS f ON u.Id=f.Followed
+								WHERE u.Id="` + user.Id + `";`).Scan(&user.Followers)
+	if err != nil {
+		return structures.UserPage{}, err
+	}
+
+	err = db.c.QueryRow(`SELECT COUNT(*) 
+								FROM Users AS u JOIN Follows AS f ON u.Id=f.Follow
+								WHERE u.Id="` + user.Id + `";`).Scan(&user.Following)
+	if err != nil {
+		return structures.UserPage{}, err
+	}
+
+	rows, err := db.c.Query(`SELECT p.Id
+								FROM Users AS u LEFT JOIN Photo AS p ON u.Id=p.User
+								WHERE u.Id="` + user.Id + `"
+								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+	if err != nil {
+		return structures.UserPage{}, err
+	}
+
+	num := user.PhotoCounter
+
+	if num <= 10+(pageId*10) {
+		user.NextPhotosPageId = 0
+		num = num % 10
+	} else {
+		user.NextPhotosPageId = pageId + 1
+		num = 10
+	}
+
+	i := 0
+	user.Photos = make([]structures.PhotoID, num)
+	if num > 0 {
+		for rows.Next() {
+			err = rows.Scan(&user.Photos[i].Value)
+			if err != nil {
+				return structures.UserPage{}, err
+			}
+			i++
+		}
+	}
+
+	return user, nil
+}

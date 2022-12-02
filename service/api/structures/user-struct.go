@@ -21,6 +21,16 @@ type User struct {
 	Username Username   `json:"username"`
 }
 
+type UserPage struct {
+	Id               string    `json:"identifier"`
+	Username         string    `json:"username"`
+	Photos           []PhotoID `json:"photos"`
+	NextPhotosPageId int64     `json:"nextPhotosPageId"`
+	Followers        int64     `json:"followers"`
+	Following        int64     `json:"following"`
+	PhotoCounter     int64     `json:"photoCounter"`
+}
+
 type UserData struct {
 	Id       string `json:"identifier"`
 	Username string `json:"username"`

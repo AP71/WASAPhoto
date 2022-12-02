@@ -45,6 +45,7 @@ type AppDatabase interface {
 	UploadFile(file structures.Photo, user string) error
 	DeleteFile(file structures.PhotoID) error
 	GetUsers(userToSearch string, pageId int64, except string) (structures.Users, error)
+	GetUserPage(username string, pageId int64) (structures.UserPage, error)
 	Ping() error
 }
 
