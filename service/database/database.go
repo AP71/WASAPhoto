@@ -46,6 +46,8 @@ type AppDatabase interface {
 	DeleteFile(file structures.PhotoID) error
 	GetUsers(userToSearch string, pageId int64, except string) (structures.Users, error)
 	GetUserPage(username string, pageId int64) (structures.UserPage, error)
+	BanUser(username string, byUsername string) error
+	UnbanUser(username string, byUsername string) error
 	Ping() error
 }
 

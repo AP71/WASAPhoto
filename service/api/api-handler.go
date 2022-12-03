@@ -13,6 +13,8 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.DELETE("/profile/:username/photos/:photoId", rt.deletePhoto)
 	rt.router.GET("/profile/", rt.searchUsers)
 	rt.router.GET("/profile/:username/", rt.getUserProfile)
+	rt.router.PUT("/profile/:username/banned/:byUsername", rt.banUser)
+	rt.router.DELETE("/profile/:username/banned/:byUsername", rt.unbanUser)
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

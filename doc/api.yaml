@@ -186,7 +186,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '409':  {$ref: '#/components/responses/conflictError'}
@@ -203,7 +202,6 @@ paths:
         '204':
           description: |
             User unbanned successfully.
-        '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '409':  {$ref: '#/components/responses/conflictError'}

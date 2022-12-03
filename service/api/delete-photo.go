@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -47,7 +46,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	//returning Message
-	err = json.NewEncoder(w).Encode(errors.JSONMsg{Message: "File delted successfully."})
+	w.WriteHeader(http.StatusNoContent)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "DoLogin return an error.", http.StatusInternalServerError, "Internal server error")
 		return

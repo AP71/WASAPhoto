@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"strconv"
 	"wasa-photo/service/api/structures"
 
@@ -11,9 +12,9 @@ func (db *appdbimpl) GetUserId(username string) (string, error) {
 	var id uuid.UUID
 	err := db.c.QueryRow(`SELECT Id FROM Users WHERE Username="` + username + `";`).Scan(&id)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
-	return id.String(), err
+	return id.String(), nil
 }
 
 func (db *appdbimpl) CreateUser(username string) (string, error) {
@@ -164,4 +165,57 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	}
 
 	return user, nil
+}
+
+func (db *appdbimpl) BanUser(username string, byUsername string) error {
+	byUsernameId, err := db.GetUserId(byUsername)
+	if err != nil {
+		return err
+	}
+
+	usernameId, err := db.GetUserId(username)
+	if err != nil && usernameId == "" {
+		return errors.New("user not found")
+	}
+
+	insertUserSQL := `INSERT INTO Banned(User, Banned) VALUES (?, ?);`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(usernameId, byUsernameId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
+	byUsernameId, err := db.GetUserId(byUsername)
+	if err != nil {
+		return err
+	}
+
+	usernameId, err := db.GetUserId(username)
+	if err != nil && usernameId == "" {
+		return errors.New("user not found")
+	}
+
+	insertUserSQL := `DELETE FROM Banned WHERE User=? AND Banned=? RETURNING User;`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	res, err := statement.Exec(usernameId, byUsernameId)
+	if err != nil {
+		return err
+	}
+
+	i, err := res.RowsAffected()
+	if i == 0 {
+		return errors.New("relationship not found")
+	} else if err != nil {
+		return err
+	}
+	return nil
 }
