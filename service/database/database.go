@@ -48,6 +48,8 @@ type AppDatabase interface {
 	GetUserPage(username string, pageId int64) (structures.UserPage, error)
 	BanUser(username string, byUsername string) error
 	UnbanUser(username string, byUsername string) error
+	FollowUser(username string, byUsername string) error
+	UnfollowUser(username string, byUsername string) error
 	Ping() error
 }
 

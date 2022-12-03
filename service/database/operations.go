@@ -183,7 +183,7 @@ func (db *appdbimpl) BanUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(usernameId, byUsernameId)
+	_, err = statement.Exec(byUsernameId, usernameId)
 	if err != nil {
 		return err
 	}
@@ -206,7 +206,60 @@ func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
-	res, err := statement.Exec(usernameId, byUsernameId)
+	res, err := statement.Exec(byUsernameId, usernameId)
+	if err != nil {
+		return err
+	}
+
+	i, err := res.RowsAffected()
+	if i == 0 {
+		return errors.New("relationship not found")
+	} else if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) FollowUser(username string, byUsername string) error {
+	byUsernameId, err := db.GetUserId(byUsername)
+	if err != nil {
+		return err
+	}
+
+	usernameId, err := db.GetUserId(username)
+	if err != nil && usernameId == "" {
+		return errors.New("user not found")
+	}
+
+	insertUserSQL := `INSERT INTO Follows(Follow, Followed) VALUES (?, ?);`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(byUsernameId, usernameId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) UnfollowUser(username string, byUsername string) error {
+	byUsernameId, err := db.GetUserId(byUsername)
+	if err != nil {
+		return err
+	}
+
+	usernameId, err := db.GetUserId(username)
+	if err != nil && usernameId == "" {
+		return errors.New("user not found")
+	}
+
+	insertUserSQL := `DELETE FROM Follows WHERE Follow=? AND Followed=? RETURNING Follow;`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	res, err := statement.Exec(byUsernameId, usernameId)
 	if err != nil {
 		return err
 	}
