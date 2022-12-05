@@ -4,14 +4,19 @@ type PhotoID struct {
 	Value int64 `json:"photoId"`
 }
 
-type Photo struct {
+type Image struct {
 	Value []byte `json:"data"`
 }
 
-type Post struct {
-	Id          PhotoID `json:"photo"`
-	User        string  `json:"user"`
-	Data        string  `json:"data"`
-	NumLikes    int64   `json:"numberOfLikes"`
-	NumComments int64   `json:"numberOfComments"`
+type Photo struct {
+	Id          int64  `json:"photo"`
+	Data        string `json:"data"`
+	User        string `json:"user"`
+	NumLikes    int64  `json:"numberOfLikes"`
+	NumComments int64  `json:"numberOfComments"`
+}
+
+type Photos struct {
+	Post           []Photo `json:"posts"`
+	NextFeedPageId int64   `json:"nextFeedPageId"`
 }

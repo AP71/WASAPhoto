@@ -14,7 +14,7 @@ import (
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var file structures.Photo
+	var file structures.Image
 
 	//Getting user data
 	res, user := auth.CheckAuth(rt.db, r)
@@ -45,7 +45,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	//returning Message
 	err = json.NewEncoder(w).Encode(errors.JSONMsg{Message: "Resource created"})
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "DoLogin return an error.", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "uploadPhoto return an error.", http.StatusInternalServerError, "Internal server error")
 		return
 	}
 

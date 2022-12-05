@@ -290,10 +290,8 @@ paths:
             image/*:
               schema:
                 $ref: '#/components/schemas/file'
-        '204':
-          description: |
-            There isn't any image to show.
         '400':  {$ref: '#/components/responses/badRequest'}
+        '404':  {$ref: '#/components/responses/notFoundError'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
   /feed/{photoId}/likes/{username}:

@@ -42,7 +42,7 @@ type AppDatabase interface {
 	CreateUser(username string) (string, error)
 	VerifyToken(user *structures.User) bool
 	UpdateUsername(user structures.User, new structures.NewUsername) (string, error)
-	UploadFile(file structures.Photo, user string) error
+	UploadFile(file structures.Image, user string) error
 	DeleteFile(file structures.PhotoID) error
 	GetUsers(userToSearch string, pageId int64, except string) (structures.Users, error)
 	GetUserPage(username string, pageId int64) (structures.UserPage, error)
@@ -50,6 +50,8 @@ type AppDatabase interface {
 	UnbanUser(username string, byUsername string) error
 	FollowUser(username string, byUsername string) error
 	UnfollowUser(username string, byUsername string) error
+	GetFeed(user structures.User, pageId int64) (structures.Photos, error)
+	GetPhoto(photoId int64, image *structures.Image) error
 	Ping() error
 }
 

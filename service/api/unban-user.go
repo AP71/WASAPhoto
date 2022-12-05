@@ -45,7 +45,7 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 
 	w.WriteHeader(http.StatusNoContent)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "UpdateUsername return an error.", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "unbanUser return an error.", http.StatusInternalServerError, "Internal server error")
 		return
 	}
 }

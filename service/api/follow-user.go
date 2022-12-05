@@ -46,7 +46,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	err = json.NewEncoder(w).Encode(errors.JSONMsg{Message: "Resource created"})
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "UpdateUsername return an error.", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "followUser return an error.", http.StatusInternalServerError, "Internal server error")
 		return
 	}
 }

@@ -46,7 +46,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	err = json.NewEncoder(w).Encode(errors.JSONMsg{Message: "Resource created"})
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "UpdateUsername return an error.", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "banUser return an error.", http.StatusInternalServerError, "Internal server error")
 		return
 	}
 }

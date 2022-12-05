@@ -49,7 +49,7 @@ func (db *appdbimpl) UpdateUsername(user structures.User, new structures.NewUser
 	return new.Value, nil
 }
 
-func (db *appdbimpl) UploadFile(file structures.Photo, user string) error {
+func (db *appdbimpl) UploadFile(file structures.Image, user string) error {
 	insertUserSQL := `INSERT INTO Photo(File, User) VALUES (?, ?);`
 	statement, err := db.c.Prepare(insertUserSQL)
 	if err != nil {
@@ -268,6 +268,65 @@ func (db *appdbimpl) UnfollowUser(username string, byUsername string) error {
 	if i == 0 {
 		return errors.New("relationship not found")
 	} else if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Photos, error) {
+	var feed structures.Photos
+	var num int64
+
+	err := db.c.QueryRow(`SELECT COUNT(*) 
+								FROM Users u JOIN Follows f ON u.Id=f.Follow
+											JOIN Photo p ON p.User=f.Followed
+								WHERE 	u.Id="` + user.Id.Value + `" 
+										AND p.User NOT IN (SELECT b.Banned 
+																FROM Banned b 
+																WHERE b.User=f.Follow);`).Scan(&num)
+	if err != nil {
+		return structures.Photos{}, err
+	}
+	if num == 0 {
+		return structures.Photos{}, nil
+	}
+
+	rows, err := db.c.Query(`SELECT p.Id, p.User, p.Data, COUNT(l.User), COUNT(c.User)
+								FROM Users u JOIN Follows f ON u.Id=f.Follow
+											 JOIN Photo p ON p.User=f.Followed
+											 LEFT JOIN Likes l ON p.Id=l.IdPhoto
+											 LEFT JOIN Comment c ON p.Id=c.IdPhoto
+								WHERE f.Follow="` + user.Id.Value + `" AND p.User NOT IN (SELECT b.Banned FROM Banned b WHERE b.User=f.Follow)
+								GROUP BY p.Id, p.User, p.Data
+								ORDER BY p.Data DESC
+								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+	if err != nil {
+		return structures.Photos{}, err
+	}
+
+	if num <= 10+(pageId*10) {
+		feed.NextFeedPageId = 0
+		num = num % 10
+	} else {
+		feed.NextFeedPageId = pageId + 1
+		num = 10
+	}
+
+	i := 0
+	feed.Post = make([]structures.Photo, num)
+	for rows.Next() {
+		err = rows.Scan(&feed.Post[i].Id, &feed.Post[i].User, &feed.Post[i].Data, &feed.Post[i].NumLikes, &feed.Post[i].NumComments)
+		if err != nil {
+			return structures.Photos{}, err
+		}
+		i++
+	}
+	return feed, nil
+}
+
+func (db *appdbimpl) GetPhoto(photoId int64, image *structures.Image) error {
+	err := db.c.QueryRow(`SELECT File FROM Photo WHERE Id=` + strconv.Itoa(int(photoId)) + `;`).Scan(&image.Value)
+	if err != nil {
 		return err
 	}
 	return nil
