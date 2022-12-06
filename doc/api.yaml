@@ -64,7 +64,7 @@ paths:
         '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/:
+  /profile/{username}/username:
     parameters:
       - {$ref: '#/components/parameters/username'}
     put:
@@ -96,6 +96,9 @@ paths:
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '403':  {$ref: '#/components/responses/forbiddenAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
+  /profile/{username}/:
+    parameters:
+      - {$ref: '#/components/parameters/username'}
     get:
       tags: ["Interactions with other users"]
       summary: Retrive a user's profile

@@ -36,7 +36,6 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//returning Message
 	w.WriteHeader(http.StatusNoContent)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "deletePhoto return an error.", http.StatusInternalServerError, "Internal server error")

@@ -21,17 +21,17 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 
 	err := json.NewDecoder(r.Body).Decode(&new)
 	_ = r.Body.Close()
-	//Checking JSON
+
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "Wrong JSON received", http.StatusBadRequest, "Wrong JSON received")
 		return
 	}
-	//Checking username
+
 	if !structures.CheckUsername(new.Value) {
 		errors.WriteResponse(rt.baseLogger, w, "Invalid username received", http.StatusBadRequest, "Invalid username received")
 		return
 	}
-	//Updating username
+
 	user.Username.Value, err = rt.db.UpdateUsername(user, new)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
@@ -39,7 +39,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	//Returning username
+
 	err = json.NewEncoder(w).Encode(user.Username)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "UpdateUsername return an error.", http.StatusInternalServerError, "Internal server error")

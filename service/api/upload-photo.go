@@ -34,7 +34,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	//returning Message
+
 	err = json.NewEncoder(w).Encode(errors.JSONMsg{Message: "Resource created"})
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "uploadPhoto return an error.", http.StatusInternalServerError, "Internal server error")

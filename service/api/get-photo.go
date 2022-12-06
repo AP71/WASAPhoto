@@ -10,7 +10,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
 func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, user structures.User) {
 
 	var photoId int64
