@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"wasa-photo/service/api/auth"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
 
@@ -12,17 +11,10 @@ import (
 )
 
 // getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
-func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, user structures.User) {
 
 	var photoId int64
 	var image structures.Image
-
-	res, _ := auth.CheckAuth(rt.db, r)
-
-	if !res {
-		errors.WriteResponse(rt.baseLogger, w, "Authentication failed", http.StatusUnauthorized, "Unauthorized access")
-		return
-	}
 
 	photoId, err := strconv.ParseInt(ps.ByName("photoId"), 10, 64)
 	if err != nil {

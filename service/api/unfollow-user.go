@@ -3,28 +3,20 @@ package api
 import (
 	"net/http"
 	"strings"
-	"wasa-photo/service/api/auth"
 	"wasa-photo/service/api/errors"
+	"wasa-photo/service/api/structures"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, user structures.User) {
 	w.Header().Set("content-type", "application/json")
 
 	var username string
 	var byUsername string
 
-	//Getting user data
-	res, user := auth.CheckAuth(rt.db, r)
-
 	username = ps.ByName("username")
 	byUsername = ps.ByName("byUsername")
-
-	if !res {
-		errors.WriteResponse(rt.baseLogger, w, "Authentication failed", http.StatusUnauthorized, "Unauthorized access")
-		return
-	}
 
 	if byUsername != user.Username.Value {
 		errors.WriteResponse(rt.baseLogger, w, "Operation not permitted", http.StatusForbidden, "Unauthorized access: Operation not permitted")

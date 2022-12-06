@@ -331,3 +331,49 @@ func (db *appdbimpl) GetPhoto(photoId int64, image *structures.Image) error {
 	}
 	return nil
 }
+
+func (db *appdbimpl) SetLike(photoId structures.PhotoID, user structures.User) error {
+
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	if err != nil {
+		return errors.New("image not found")
+	}
+
+	insertUserSQL := `INSERT INTO Likes(IdPhoto, User) VALUES (?, ?);`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(photoId.Value, user.Id.Value)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) RemoveLike(photoId structures.PhotoID, user structures.User) error {
+
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	if err != nil {
+		return errors.New("image not found")
+	}
+
+	insertUserSQL := `DELETE FROM Likes WHERE IdPhoto=? AND User=?;`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	res, err := statement.Exec(photoId.Value, user.Id.Value)
+	if err != nil {
+		return err
+	}
+
+	v, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if v == 0 {
+		return errors.New("0 changes")
+	}
+	return nil
+}

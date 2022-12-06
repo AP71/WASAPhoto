@@ -5,26 +5,19 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"wasa-photo/service/api/auth"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, user structures.User) {
 	w.Header().Set("content-type", "application/json")
-	var user structures.UserPage
+	var userPage structures.UserPage
 	var pageId int64
 	var err error
 
-	res, _ := auth.CheckAuth(rt.db, r)
-	user.Username = ps.ByName("username")
-
-	if !res {
-		errors.WriteResponse(rt.baseLogger, w, "Authentication failed", http.StatusUnauthorized, "Unauthorized access")
-		return
-	}
+	userPage.Username = ps.ByName("username")
 
 	if r.URL.Query().Has("pageId") {
 		pageId, err = strconv.ParseInt(r.URL.Query().Get("pageId"), 10, 64)
@@ -36,7 +29,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		pageId = 0
 	}
 
-	user, err = rt.db.GetUserPage(user.Username, pageId)
+	userPage, err = rt.db.GetUserPage(userPage.Username, pageId)
 	if err != nil && strings.Contains(err.Error(), "sql: no rows in result set") {
 		errors.WriteResponse(rt.baseLogger, w, "File not found", http.StatusNotFound, "Image not found")
 		return
@@ -45,6 +38,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(&user)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "getUserProfile return an error.", http.StatusInternalServerError, "Internal server error")

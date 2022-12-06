@@ -52,6 +52,8 @@ type AppDatabase interface {
 	UnfollowUser(username string, byUsername string) error
 	GetFeed(user structures.User, pageId int64) (structures.Photos, error)
 	GetPhoto(photoId int64, image *structures.Image) error
+	SetLike(photoId structures.PhotoID, user structures.User) error
+	RemoveLike(photoId structures.PhotoID, user structures.User) error
 	Ping() error
 }
 

@@ -3,26 +3,16 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"wasa-photo/service/api/auth"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params, user structures.User) {
 	w.Header().Set("content-type", "application/json")
 
-	var user structures.User
 	var new structures.NewUsername
-
-	//Getting user data
-	res, user := auth.CheckAuth(rt.db, r)
-
-	if !res {
-		errors.WriteResponse(rt.baseLogger, w, "Authentication failed", http.StatusUnauthorized, "Unauthorized access")
-		return
-	}
 
 	if ps.ByName("username") != user.Username.Value {
 		errors.WriteResponse(rt.baseLogger, w, "Operation not permitted", http.StatusForbidden, "Unauthorized access: Operation not permitted")
@@ -48,6 +38,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	//Returning username
 	err = json.NewEncoder(w).Encode(user.Username)
 	if err != nil {
