@@ -28,10 +28,7 @@ func (db *appdbimpl) CreateUser(username string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = statement.Close()
-	if err != nil {
-		return "", err
-	}
+	defer statement.Close()
 	return uuid.String(), err
 }
 
@@ -50,10 +47,7 @@ func (db *appdbimpl) UpdateUsername(user structures.User, new structures.NewUser
 		return "", err
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return "", err
-	}
+	defer statement.Close()
 	return new.Value, nil
 }
 
@@ -67,11 +61,7 @@ func (db *appdbimpl) UploadFile(file structures.Image, user string) error {
 	if err != nil {
 		return err
 	}
-
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
+	defer statement.Close()
 	return nil
 }
 
@@ -103,6 +93,11 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 		return structures.Users{}, err
 	}
 
+	err = rows.Err()
+	if err != nil {
+		return structures.Users{}, err
+	}
+
 	if num <= 10+(pageId*10) {
 		usersList.NextUsersPageId = 0
 		num = num % 10
@@ -120,6 +115,7 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 		}
 		i++
 	}
+
 	err = rows.Close()
 	if err != nil {
 		return structures.Users{}, err
@@ -159,6 +155,11 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 		return structures.UserPage{}, err
 	}
 
+	err = rows.Err()
+	if err != nil {
+		return structures.UserPage{}, err
+	}
+
 	num := user.PhotoCounter
 
 	if num <= 10+(pageId*10) {
@@ -179,6 +180,11 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 			}
 			i++
 		}
+	}
+
+	err = rows.Close()
+	if err != nil {
+		return structures.UserPage{}, err
 	}
 
 	return user, nil
@@ -205,10 +211,7 @@ func (db *appdbimpl) BanUser(username string, byUsername string) error {
 		return err
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
+	defer statement.Close()
 	return nil
 }
 
@@ -240,11 +243,7 @@ func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
 		return err
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
-
+	defer statement.Close()
 	return nil
 }
 
@@ -269,10 +268,7 @@ func (db *appdbimpl) FollowUser(username string, byUsername string) error {
 		return err
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
+	defer statement.Close()
 	return nil
 }
 
@@ -304,10 +300,7 @@ func (db *appdbimpl) UnfollowUser(username string, byUsername string) error {
 		return err
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
+	defer statement.Close()
 	return nil
 }
 
@@ -338,6 +331,10 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 								GROUP BY p.Id, p.User, p.Data
 								ORDER BY p.Data DESC
 								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+	if err != nil {
+		return structures.Photos{}, err
+	}
+	err = rows.Err()
 	if err != nil {
 		return structures.Photos{}, err
 	}
@@ -392,10 +389,7 @@ func (db *appdbimpl) SetLike(photoId structures.PhotoID, user structures.User) e
 		return err
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
+	defer statement.Close()
 	return nil
 }
 
@@ -424,9 +418,6 @@ func (db *appdbimpl) RemoveLike(photoId structures.PhotoID, user structures.User
 		return errors.New("0 changes")
 	}
 
-	err = statement.Close()
-	if err != nil {
-		return err
-	}
+	defer statement.Close()
 	return nil
 }
