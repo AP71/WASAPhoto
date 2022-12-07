@@ -421,3 +421,48 @@ func (db *appdbimpl) RemoveLike(photoId structures.PhotoID, user structures.User
 	defer statement.Close()
 	return nil
 }
+
+func (db *appdbimpl) WriteComment(photoId structures.PhotoID, user structures.User, comment structures.Comment) error {
+
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	if err != nil {
+		return errors.New("image not found")
+	}
+
+	insertUserSQL := `INSERT INTO Comment(IdPhoto, User, Text) VALUES (?, ?, ?);`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(photoId.Value, user.Id.Value, comment.Text)
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+	return nil
+}
+
+func (db *appdbimpl) DeleteComment(comment structures.CommentId) error {
+
+	insertUserSQL := `DELETE FROM Comment WHERE Id=?;`
+	statement, err := db.c.Prepare(insertUserSQL)
+	if err != nil {
+		return err
+	}
+	res, err := statement.Exec(comment.Value)
+	if err != nil {
+		return err
+	}
+
+	v, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if v == 0 {
+		return errors.New("0 changes")
+	}
+
+	defer statement.Close()
+	return nil
+}

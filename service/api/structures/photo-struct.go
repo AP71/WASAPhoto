@@ -1,5 +1,7 @@
 package structures
 
+import "regexp"
+
 type PhotoID struct {
 	Value int64 `json:"photoId"`
 }
@@ -19,4 +21,18 @@ type Photo struct {
 type Photos struct {
 	Post           []Photo `json:"posts"`
 	NextFeedPageId int64   `json:"nextFeedPageId"`
+}
+
+type Comment struct {
+	Text string `json:"text"`
+}
+
+type CommentId struct {
+	Value int64 `json:"id"`
+}
+
+func (c *Comment) IsValid() bool {
+	l := len(c.Text)
+	res, _ := regexp.MatchString(`^[a-zA-Z0-9_., !?:;""$%&€()[{}]*$`, c.Text)
+	return (l > 0) && (l < 256) && res
 }

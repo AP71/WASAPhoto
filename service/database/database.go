@@ -54,6 +54,8 @@ type AppDatabase interface {
 	GetPhoto(photoId int64, image *structures.Image) error
 	SetLike(photoId structures.PhotoID, user structures.User) error
 	RemoveLike(photoId structures.PhotoID, user structures.User) error
+	WriteComment(photoId structures.PhotoID, user structures.User, comment structures.Comment) error
+	DeleteComment(comment structures.CommentId) error
 	Ping() error
 }
 
