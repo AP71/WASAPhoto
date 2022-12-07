@@ -28,6 +28,10 @@ func (db *appdbimpl) CreateUser(username string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	err = statement.Close()
+	if err != nil {
+		return "", err
+	}
 	return uuid.String(), err
 }
 
@@ -46,6 +50,10 @@ func (db *appdbimpl) UpdateUsername(user structures.User, new structures.NewUser
 		return "", err
 	}
 
+	err = statement.Close()
+	if err != nil {
+		return "", err
+	}
 	return new.Value, nil
 }
 
@@ -56,6 +64,11 @@ func (db *appdbimpl) UploadFile(file structures.Image, user string) error {
 		return err
 	}
 	_, err = statement.Exec(file.Value, user)
+	if err != nil {
+		return err
+	}
+
+	err = statement.Close()
 	if err != nil {
 		return err
 	}
@@ -106,6 +119,10 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 			return structures.Users{}, err
 		}
 		i++
+	}
+	err = rows.Close()
+	if err != nil {
+		return structures.Users{}, err
 	}
 	return usersList, nil
 }
@@ -187,6 +204,11 @@ func (db *appdbimpl) BanUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
+
+	err = statement.Close()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -217,6 +239,12 @@ func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
 	} else if err != nil {
 		return err
 	}
+
+	err = statement.Close()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -237,6 +265,11 @@ func (db *appdbimpl) FollowUser(username string, byUsername string) error {
 		return err
 	}
 	_, err = statement.Exec(byUsernameId, usernameId)
+	if err != nil {
+		return err
+	}
+
+	err = statement.Close()
 	if err != nil {
 		return err
 	}
@@ -268,6 +301,11 @@ func (db *appdbimpl) UnfollowUser(username string, byUsername string) error {
 	if i == 0 {
 		return errors.New("relationship not found")
 	} else if err != nil {
+		return err
+	}
+
+	err = statement.Close()
+	if err != nil {
 		return err
 	}
 	return nil
@@ -321,6 +359,11 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 		}
 		i++
 	}
+
+	err = rows.Close()
+	if err != nil {
+		return structures.Photos{}, err
+	}
 	return feed, nil
 }
 
@@ -345,6 +388,11 @@ func (db *appdbimpl) SetLike(photoId structures.PhotoID, user structures.User) e
 		return err
 	}
 	_, err = statement.Exec(photoId.Value, user.Id.Value)
+	if err != nil {
+		return err
+	}
+
+	err = statement.Close()
 	if err != nil {
 		return err
 	}
@@ -374,6 +422,11 @@ func (db *appdbimpl) RemoveLike(photoId structures.PhotoID, user structures.User
 	}
 	if v == 0 {
 		return errors.New("0 changes")
+	}
+
+	err = statement.Close()
+	if err != nil {
+		return err
 	}
 	return nil
 }
