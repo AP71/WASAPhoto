@@ -20,12 +20,12 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	photoId.Value, err = strconv.ParseInt(ps.ByName("photoId"), 10, 64)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Bad request: photoId not valid", http.StatusBadRequest, "Bad request: photoId not valid")
+		errors.WriteResponse(rt.baseLogger, w, "PhotoId is not valid", http.StatusBadRequest, "PhotoId is not valid")
 		return
 	}
 
 	if ps.ByName("username") != user.Username.Value {
-		errors.WriteResponse(rt.baseLogger, w, "Operation not permitted", http.StatusForbidden, "Unauthorized access: Operation not permitted")
+		errors.WriteResponse(rt.baseLogger, w, "Operation not permitted", http.StatusForbidden, "Operation not permitted")
 		return
 	}
 

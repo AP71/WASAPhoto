@@ -31,6 +31,19 @@ type CommentId struct {
 	Value int64 `json:"id"`
 }
 
+type CommentData struct {
+	IdUser   string `json:"idUser"`
+	Username string `json:"Username"`
+	Id       int64  `json:"id"`
+	Data     string `json:"data"`
+	Text     string `json:"text"`
+}
+
+type Comments struct {
+	Comments          []CommentData `json:"comments"`
+	NextCommentPageId int64         `json:"nextCommentPageId"`
+}
+
 func (c *Comment) IsValid() bool {
 	l := len(c.Text)
 	res, _ := regexp.MatchString(`^[a-zA-Z0-9_., !?:;""$%&€()[{}]*$`, c.Text)

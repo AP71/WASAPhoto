@@ -56,6 +56,7 @@ type AppDatabase interface {
 	RemoveLike(photoId structures.PhotoID, user structures.User) error
 	WriteComment(photoId structures.PhotoID, user structures.User, comment structures.Comment) error
 	DeleteComment(comment structures.CommentId) error
+	GetComments(photoId structures.PhotoID, pageId int64, user structures.User) (structures.Comments, error)
 	Ping() error
 }
 

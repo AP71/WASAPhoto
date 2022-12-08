@@ -466,3 +466,63 @@ func (db *appdbimpl) DeleteComment(comment structures.CommentId) error {
 	defer statement.Close()
 	return nil
 }
+
+func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user structures.User) (structures.Comments, error) {
+	var comments structures.Comments
+	var num int64
+
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	if err != nil {
+		return structures.Comments{}, errors.New("image not found")
+	}
+
+	err = db.c.QueryRow(`SELECT COUNT(*) 
+								FROM Comment c JOIN Photo p ON c.IdPhoto=p.Id
+								WHERE p.Id="` + strconv.FormatInt(photoId.Value, 10) + `" 
+										AND c.User NOT IN (SELECT b.Banned 
+																FROM Banned b 
+																WHERE b.User="` + user.Username.Value + `");`).Scan(&num)
+	if err != nil {
+		return structures.Comments{}, err
+	}
+	if num == 0 {
+		return structures.Comments{}, nil
+	}
+
+	rows, err := db.c.Query(`SELECT u.Id, u.Username, c.Id, c.Data, c.Text
+								FROM Comment c JOIN Photo p ON c.IdPhoto=p.Id JOIN Users u ON c.User=u.Id
+								WHERE p.Id="` + strconv.FormatInt(photoId.Value, 10) + `" 
+								ORDER BY c.Data DESC
+								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+	if err != nil {
+		return structures.Comments{}, err
+	}
+	err = rows.Err()
+	if err != nil {
+		return structures.Comments{}, err
+	}
+
+	if num <= 10+(pageId*10) {
+		comments.NextCommentPageId = 0
+		num = num % 10
+	} else {
+		comments.NextCommentPageId = pageId + 1
+		num = 10
+	}
+
+	i := 0
+	comments.Comments = make([]structures.CommentData, num)
+	for rows.Next() {
+		err = rows.Scan(&comments.Comments[i].IdUser, &comments.Comments[i].Username, &comments.Comments[i].Id, &comments.Comments[i].Data, &comments.Comments[i].Text)
+		if err != nil {
+			return structures.Comments{}, err
+		}
+		i++
+	}
+
+	err = rows.Close()
+	if err != nil {
+		return structures.Comments{}, err
+	}
+	return comments, nil
+}
