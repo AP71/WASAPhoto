@@ -1,6 +1,9 @@
 package structures
 
-import "regexp"
+import (
+	"net/http"
+	"regexp"
+)
 
 type PhotoID struct {
 	Value int64 `json:"photoId"`
@@ -48,4 +51,13 @@ func (c *Comment) IsValid() bool {
 	l := len(c.Text)
 	res, _ := regexp.MatchString(`^[a-zA-Z0-9_., !?:;""$%&€()[{}]*$`, c.Text)
 	return (l > 0) && (l < 256) && res
+}
+
+func (i *Image) IsValid() bool {
+	l := len(i.Value)
+	return (l > 0) && (l <= 15728640)
+}
+
+func (i *Image) Extension() string {
+	return http.DetectContentType(i.Value)
 }

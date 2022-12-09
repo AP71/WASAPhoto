@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
 
@@ -22,10 +23,18 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Wrong image received", http.StatusUnsupportedMediaType, "Wrong image received")
+		errors.WriteResponse(rt.baseLogger, w, "Wrong image received", http.StatusBadRequest, "Wrong image received")
 		return
 	}
 	file.Value = data
+
+	if !file.IsValid() {
+		errors.WriteResponse(rt.baseLogger, w, "File to large", http.StatusRequestEntityTooLarge, "File to large")
+		return
+	} else if !strings.HasPrefix(file.Extension(), "image/") {
+		errors.WriteResponse(rt.baseLogger, w, "File not supported", http.StatusUnsupportedMediaType, "File not supported")
+		return
+	}
 
 	err = rt.db.UploadFile(file, user.Id.Value)
 	if err != nil {

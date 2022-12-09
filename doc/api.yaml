@@ -146,8 +146,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/success'
-        '415':  {$ref: '#/components/responses/fileNotSupported'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
+        '400': {$ref: '#/components/responses/badRequest'}
+        '413':  {$ref: '#/components/responses/entityToLarge'}
+        '415':  {$ref: '#/components/responses/fileNotSupported'}
         '5XX':  {$ref: '#/components/responses/serverError'}
   /profiles/{username}/photos/{photoId}:  
     parameters:
@@ -688,7 +690,7 @@ components:
       type: string
       format: binary   
       minLength: 0
-      maxLength: 8388608
+      maxLength: 15728640
     errorMessage:
       title: Error message.
       description: Represents the error message.
@@ -743,6 +745,12 @@ components:
       content:
         application/json:
           schema:  
+            $ref: '#/components/schemas/errorMessage'
+    entityToLarge:
+      description: File to large.
+      content:
+        application/json:
+          schema: 
             $ref: '#/components/schemas/errorMessage'
 
     

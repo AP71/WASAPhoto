@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"wasa-photo/webui"
 	"io/fs"
 	"net/http"
 	"strings"

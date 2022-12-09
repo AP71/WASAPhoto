@@ -30,8 +30,8 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	userPage, err = rt.db.GetUserPage(userPage.Username, pageId)
-	if err != nil && strings.Contains(err.Error(), "sql: no rows in result set") {
-		errors.WriteResponse(rt.baseLogger, w, "File not found", http.StatusNotFound, "Image not found")
+	if err != nil && strings.Contains(err.Error(), `sql: Scan error on column index 0, name "Id": converting NULL to string is unsupported`) {
+		errors.WriteResponse(rt.baseLogger, w, "User not found", http.StatusNotFound, "User not found")
 		return
 	} else if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Database error")
@@ -39,7 +39,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(&user)
+	err = json.NewEncoder(w).Encode(&userPage)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "getUserProfile return an error.", http.StatusInternalServerError, "Internal server error")
 		return
