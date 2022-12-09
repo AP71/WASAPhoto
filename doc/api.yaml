@@ -41,7 +41,7 @@ paths:
                 $ref: '#/components/schemas/identifier'    
         '400': {$ref: '#/components/responses/badRequest'}
         '5XX': {$ref: '#/components/responses/serverError'}
-  /profile/:
+  /profiles/:
     get:
       tags: ["Interactions with other users"]
       summary: Search users
@@ -64,7 +64,7 @@ paths:
         '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/username:
+  /profiles/{username}/username:
     parameters:
       - {$ref: '#/components/parameters/username'}
     put:
@@ -96,7 +96,7 @@ paths:
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '403':  {$ref: '#/components/responses/forbiddenAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/:
+  /profiles/{username}/:
     parameters:
       - {$ref: '#/components/parameters/username'}
     get:
@@ -120,7 +120,7 @@ paths:
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/photos/:  
+  /profiles/{username}/photos/:  
     parameters:
       - {$ref: '#/components/parameters/username'}
     post:
@@ -149,7 +149,7 @@ paths:
         '415':  {$ref: '#/components/responses/fileNotSupported'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/photos/{photoId}:  
+  /profiles/{username}/photos/{photoId}:  
     parameters:
       - {$ref: '#/components/parameters/username'}
       - {$ref: '#/components/parameters/photoId'}
@@ -169,7 +169,7 @@ paths:
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/banned/{byUsername}:
+  /profiles/{username}/banned/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
       - {$ref: '#/components/parameters/byUsername'}
@@ -209,7 +209,7 @@ paths:
         '404':  {$ref: '#/components/responses/notFoundError'}  
         '409':  {$ref: '#/components/responses/conflictError'}
         '5XX':  {$ref: '#/components/responses/serverError'}
-  /profile/{username}/followed/{byUsername}:
+  /profiles/{username}/followed/{byUsername}:
     parameters:
       - {$ref: '#/components/parameters/username'}
       - {$ref: '#/components/parameters/byUsername'}
