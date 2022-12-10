@@ -42,8 +42,9 @@ type Users struct {
 }
 
 func CheckUsername(s string) bool {
+	l := len(s)
 	res, _ := regexp.MatchString("^[a-zA-Z0-9_.]*$", s)
-	return ((len(s) >= 3) && (len(s) <= 16) && res)
+	return ((l >= 3) && (l <= 16) && res)
 }
 
 func (id Identifier) CheckID() bool {
