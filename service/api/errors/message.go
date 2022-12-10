@@ -8,7 +8,7 @@ import (
 )
 
 type JSONMsg struct {
-	Message string `json:message`
+	Message string `json:"message"`
 }
 
 func WriteResponse(logger logrus.FieldLogger, w http.ResponseWriter, logMessage string, httpStatus int, message string) {
