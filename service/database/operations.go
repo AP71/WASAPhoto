@@ -1,12 +1,21 @@
 package database
 
 import (
+	"database/sql"
 	"errors"
 	"strconv"
 	"wasa-photo/service/api/structures"
 
 	"github.com/gofrs/uuid"
 )
+
+func closeRows(rows *sql.Rows, err *error) {
+
+	*err = rows.Close()
+	if err != nil {
+		return
+	}
+}
 
 func (db *appdbimpl) GetUserId(username string) (string, error) {
 	var id uuid.UUID
@@ -89,11 +98,15 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 								FROM Users 
 								WHERE Username != "` + except + `" AND Username LIKE '%` + userToSearch + `%' 
 								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+
 	if err != nil {
 		return structures.Users{}, err
 	}
-
 	err = rows.Err()
+	if err != nil {
+		return structures.Users{}, err
+	}
+	defer closeRows(rows, &err)
 	if err != nil {
 		return structures.Users{}, err
 	}
@@ -116,10 +129,6 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 		i++
 	}
 
-	err = rows.Close()
-	if err != nil {
-		return structures.Users{}, err
-	}
 	return usersList, nil
 }
 
@@ -154,8 +163,11 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	if err != nil {
 		return structures.UserPage{}, err
 	}
-
 	err = rows.Err()
+	if err != nil {
+		return structures.UserPage{}, err
+	}
+	defer closeRows(rows, &err)
 	if err != nil {
 		return structures.UserPage{}, err
 	}
@@ -180,11 +192,6 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 			}
 			i++
 		}
-	}
-
-	err = rows.Close()
-	if err != nil {
-		return structures.UserPage{}, err
 	}
 
 	return user, nil
@@ -331,10 +338,15 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 								GROUP BY p.Id, p.User, p.Data
 								ORDER BY p.Data DESC
 								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+
 	if err != nil {
 		return structures.Photos{}, err
 	}
 	err = rows.Err()
+	if err != nil {
+		return structures.Photos{}, err
+	}
+	defer closeRows(rows, &err)
 	if err != nil {
 		return structures.Photos{}, err
 	}
@@ -357,10 +369,6 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 		i++
 	}
 
-	err = rows.Close()
-	if err != nil {
-		return structures.Photos{}, err
-	}
 	return feed, nil
 }
 
@@ -501,6 +509,10 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	if err != nil {
 		return structures.Comments{}, err
 	}
+	defer closeRows(rows, &err)
+	if err != nil {
+		return structures.Comments{}, err
+	}
 
 	if num <= 10+(pageId*10) {
 		comments.NextCommentPageId = 0
@@ -520,9 +532,5 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 		i++
 	}
 
-	err = rows.Close()
-	if err != nil {
-		return structures.Comments{}, err
-	}
 	return comments, nil
 }
