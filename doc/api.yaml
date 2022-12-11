@@ -175,6 +175,19 @@ paths:
     parameters:
       - {$ref: '#/components/parameters/username'}
       - {$ref: '#/components/parameters/byUsername'}
+    get:
+      tags: ["Interactions with other users"]
+      summary: Return the status of the interactions
+      description: |
+        Return 204 if byUsername has banned username, else 404
+      operationId: banStatus
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            byUsername has banned username.
+        '404':  {$ref: '#/components/responses/notFoundError'} 
     put:
       tags: ["Interactions with other users"]
       summary: Ban another user
@@ -215,6 +228,19 @@ paths:
     parameters:
       - {$ref: '#/components/parameters/username'}
       - {$ref: '#/components/parameters/byUsername'}
+    get:
+      tags: ["Interactions with other users"]
+      summary: Return the status of the interactions
+      description: |
+        Return 204 if byUsername follow username, else 404
+      operationId: followStatus
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            byUsername follow username.
+        '404':  {$ref: '#/components/responses/notFoundError'}  
     put:
       tags: ["Interactions with other users"]
       summary: Follow a user
@@ -303,6 +329,19 @@ paths:
     parameters:
       - {$ref: '#/components/parameters/photoId'}
       - {$ref: '#/components/parameters/username'}
+    get:
+      tags: ["Feed operations"]
+      summary: Return the status of the interactions
+      description: |
+        Return 204 if username placed a like on photo, else 404
+      operationId: likeStatus
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: |
+            byUsername liked photo.
+        '404':  {$ref: '#/components/responses/notFoundError'} 
     put:
       tags: ["Feed operations"]
       summary: Place a like
