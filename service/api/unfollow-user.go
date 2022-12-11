@@ -12,18 +12,14 @@ import (
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, user structures.User) {
 	w.Header().Set("content-type", "application/json")
 
-	var username string
-	var byUsername string
+	username := ps.ByName("username")
 
-	username = ps.ByName("username")
-	byUsername = ps.ByName("byUsername")
-
-	if byUsername != user.Username.Value {
+	if ps.ByName("byUsername") != user.Username.Value {
 		errors.WriteResponse(rt.baseLogger, w, "Operation not permitted", http.StatusForbidden, "Unauthorized access: Operation not permitted")
 		return
 	}
 
-	err := rt.db.UnfollowUser(username, byUsername)
+	err := rt.db.UnfollowUser(username, user)
 	if err != nil && err.Error() == "user not found" {
 		errors.WriteResponse(rt.baseLogger, w, "User not found", http.StatusNotFound, "User not found")
 		return

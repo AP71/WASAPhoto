@@ -36,7 +36,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	err = rt.db.UploadFile(file, user.Id.Value)
+	err = rt.db.UploadFile(file, user)
 	if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
 		return

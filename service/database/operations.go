@@ -60,13 +60,13 @@ func (db *appdbimpl) UpdateUsername(user structures.User, new structures.NewUser
 	return new.Value, nil
 }
 
-func (db *appdbimpl) UploadFile(file structures.Image, user string) error {
+func (db *appdbimpl) UploadFile(file structures.Image, user structures.User) error {
 	insertUserSQL := `INSERT INTO Photo(File, User) VALUES (?, ?);`
 	statement, err := db.c.Prepare(insertUserSQL)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(file.Value, user)
+	_, err = statement.Exec(file.Value, user.Id.Value)
 	if err != nil {
 		return err
 	}
@@ -197,11 +197,7 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	return user, nil
 }
 
-func (db *appdbimpl) BanUser(username string, byUsername string) error {
-	byUsernameId, err := db.GetUserId(byUsername)
-	if err != nil {
-		return err
-	}
+func (db *appdbimpl) BanUser(username string, byUsername structures.User) error {
 
 	usernameId, err := db.GetUserId(username)
 	if err != nil && usernameId == "" {
@@ -213,7 +209,7 @@ func (db *appdbimpl) BanUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(byUsernameId, usernameId)
+	_, err = statement.Exec(byUsername.Id.Value, usernameId)
 	if err != nil {
 		return err
 	}
@@ -222,11 +218,7 @@ func (db *appdbimpl) BanUser(username string, byUsername string) error {
 	return nil
 }
 
-func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
-	byUsernameId, err := db.GetUserId(byUsername)
-	if err != nil {
-		return err
-	}
+func (db *appdbimpl) UnbanUser(username string, byUsername structures.User) error {
 
 	usernameId, err := db.GetUserId(username)
 	if err != nil && usernameId == "" {
@@ -238,7 +230,7 @@ func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
-	res, err := statement.Exec(byUsernameId, usernameId)
+	res, err := statement.Exec(byUsername.Id.Value, usernameId)
 	if err != nil {
 		return err
 	}
@@ -254,11 +246,7 @@ func (db *appdbimpl) UnbanUser(username string, byUsername string) error {
 	return nil
 }
 
-func (db *appdbimpl) FollowUser(username string, byUsername string) error {
-	byUsernameId, err := db.GetUserId(byUsername)
-	if err != nil {
-		return err
-	}
+func (db *appdbimpl) FollowUser(username string, byUsername structures.User) error {
 
 	usernameId, err := db.GetUserId(username)
 	if err != nil && usernameId == "" {
@@ -270,7 +258,7 @@ func (db *appdbimpl) FollowUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(byUsernameId, usernameId)
+	_, err = statement.Exec(byUsername.Id.Value, usernameId)
 	if err != nil {
 		return err
 	}
@@ -279,11 +267,7 @@ func (db *appdbimpl) FollowUser(username string, byUsername string) error {
 	return nil
 }
 
-func (db *appdbimpl) UnfollowUser(username string, byUsername string) error {
-	byUsernameId, err := db.GetUserId(byUsername)
-	if err != nil {
-		return err
-	}
+func (db *appdbimpl) UnfollowUser(username string, byUsername structures.User) error {
 
 	usernameId, err := db.GetUserId(username)
 	if err != nil && usernameId == "" {
@@ -295,7 +279,7 @@ func (db *appdbimpl) UnfollowUser(username string, byUsername string) error {
 	if err != nil {
 		return err
 	}
-	res, err := statement.Exec(byUsernameId, usernameId)
+	res, err := statement.Exec(byUsername.Id.Value, usernameId)
 	if err != nil {
 		return err
 	}
@@ -533,4 +517,44 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	}
 
 	return comments, nil
+}
+
+func (db *appdbimpl) GetBanStatus(username structures.User, byUsername structures.User) error {
+
+	var err error
+
+	username.Id.Value, err = db.GetUserId(username.Username.Value)
+	if err != nil && username.Id.Value == "" {
+		return errors.New("user not found")
+	}
+
+	err = db.c.QueryRow(`SELECT * FROM Banned WHERE User="`+byUsername.Id.Value+`" AND Banned="`+username.Id.Value+`";`).Scan(&byUsername.Id.Value, &username.Id.Value)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) GetFollowStatus(username structures.User, byUsername structures.User) error {
+
+	var err error
+
+	username.Id.Value, err = db.GetUserId(username.Username.Value)
+	if err != nil && username.Id.Value == "" {
+		return errors.New("user not found")
+	}
+
+	err = db.c.QueryRow(`SELECT Follow, Followed FROM Follows WHERE Follow="`+byUsername.Id.Value+`" AND Followed="`+username.Id.Value+`";`).Scan(&byUsername.Id.Value, &username.Id.Value)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *appdbimpl) GetLikeStatus(username structures.User, photoId structures.PhotoID) error {
+	err := db.c.QueryRow(`SELECT IdPhoto, User FROM Likes WHERE User="`+username.Id.Value+`" AND IdPhoto="`+strconv.Itoa(int(photoId.Value))+`";`).Scan(&photoId.Value, &username.Id.Value)
+	if err != nil {
+		return err
+	}
+	return nil
 }
