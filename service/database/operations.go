@@ -1,21 +1,12 @@
 package database
 
 import (
-	"database/sql"
 	"errors"
 	"strconv"
 	"wasa-photo/service/api/structures"
 
 	"github.com/gofrs/uuid"
 )
-
-func closeRows(rows *sql.Rows, err *error) {
-
-	*err = rows.Close()
-	if err != nil {
-		return
-	}
-}
 
 func (db *appdbimpl) GetUserId(username string) (string, error) {
 	var id uuid.UUID
@@ -106,10 +97,7 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 	if err != nil {
 		return structures.Users{}, err
 	}
-	defer closeRows(rows, &err)
-	if err != nil {
-		return structures.Users{}, err
-	}
+	defer rows.Close()
 
 	if num <= 10+(pageId*10) {
 		usersList.NextUsersPageId = 0
@@ -167,10 +155,7 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	if err != nil {
 		return structures.UserPage{}, err
 	}
-	defer closeRows(rows, &err)
-	if err != nil {
-		return structures.UserPage{}, err
-	}
+	defer rows.Close()
 
 	num := user.PhotoCounter
 
@@ -330,10 +315,7 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 	if err != nil {
 		return structures.Photos{}, err
 	}
-	defer closeRows(rows, &err)
-	if err != nil {
-		return structures.Photos{}, err
-	}
+	defer rows.Close()
 
 	if num <= 10+(pageId*10) {
 		feed.NextFeedPageId = 0
@@ -493,10 +475,7 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	if err != nil {
 		return structures.Comments{}, err
 	}
-	defer closeRows(rows, &err)
-	if err != nil {
-		return structures.Comments{}, err
-	}
+	defer rows.Close()
 
 	if num <= 10+(pageId*10) {
 		comments.NextCommentPageId = 0
