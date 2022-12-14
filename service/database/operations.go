@@ -93,10 +93,6 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 	if err != nil {
 		return structures.Users{}, err
 	}
-	err = rows.Err()
-	if err != nil {
-		return structures.Users{}, err
-	}
 	defer rows.Close()
 
 	if num <= 10+(pageId*10) {
@@ -115,6 +111,11 @@ func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) 
 			return structures.Users{}, err
 		}
 		i++
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return structures.Users{}, err
 	}
 
 	return usersList, nil
@@ -151,10 +152,6 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	if err != nil {
 		return structures.UserPage{}, err
 	}
-	err = rows.Err()
-	if err != nil {
-		return structures.UserPage{}, err
-	}
 	defer rows.Close()
 
 	num := user.PhotoCounter
@@ -176,6 +173,10 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 				return structures.UserPage{}, err
 			}
 			i++
+		}
+		err = rows.Err()
+		if err != nil {
+			return structures.UserPage{}, err
 		}
 	}
 
@@ -311,10 +312,6 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 	if err != nil {
 		return structures.Photos{}, err
 	}
-	err = rows.Err()
-	if err != nil {
-		return structures.Photos{}, err
-	}
 	defer rows.Close()
 
 	if num <= 10+(pageId*10) {
@@ -333,6 +330,10 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 			return structures.Photos{}, err
 		}
 		i++
+	}
+	err = rows.Err()
+	if err != nil {
+		return structures.Photos{}, err
 	}
 
 	return feed, nil
@@ -471,10 +472,6 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	if err != nil {
 		return structures.Comments{}, err
 	}
-	err = rows.Err()
-	if err != nil {
-		return structures.Comments{}, err
-	}
 	defer rows.Close()
 
 	if num <= 10+(pageId*10) {
@@ -494,7 +491,10 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 		}
 		i++
 	}
-
+	err = rows.Err()
+	if err != nil {
+		return structures.Comments{}, err
+	}
 	return comments, nil
 }
 
