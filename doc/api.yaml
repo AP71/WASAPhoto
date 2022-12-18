@@ -661,7 +661,9 @@ components:
           format: date-time
           description: Upload date
           example: "2022-01-01T00:00:00Z"
-        user:
+        username: 
+          $ref: '#/components/schemas/stringUsername'
+        identifier:
           $ref: '#/components/schemas/stringIdentifier'
         numberOfLikes:
           type: integer

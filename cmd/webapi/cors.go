@@ -17,7 +17,7 @@ func applyCORSHandler(h http.Handler) http.Handler {
 			"Authorization",
 			"Access-Control-Allow-Origin",
 		}),
-		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "DELETE", "PUT"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"}),
 		handlers.AllowedOrigins([]string{"*"}),
 		handlers.AllowCredentials(),
 	)(h)

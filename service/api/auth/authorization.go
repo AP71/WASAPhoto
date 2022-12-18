@@ -15,7 +15,6 @@ func CheckAuth(db database.AppDatabase, r *http.Request) (bool, structures.User)
 	if reqToken == "" {
 		return false, structures.User{}
 	}
-
 	splitToken := strings.Split(reqToken, "Bearer ")
 	user.Id.Value = splitToken[1]
 

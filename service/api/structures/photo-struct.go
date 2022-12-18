@@ -16,7 +16,8 @@ type Image struct {
 type Photo struct {
 	Id          int64  `json:"photo"`
 	Data        string `json:"data"`
-	User        string `json:"user"`
+	Username    string `json:"username"`
+	Identifier  string `json:"identifier"`
 	NumLikes    int64  `json:"numberOfLikes"`
 	NumComments int64  `json:"numberOfComments"`
 }

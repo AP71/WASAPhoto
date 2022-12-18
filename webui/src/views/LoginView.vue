@@ -1,4 +1,5 @@
 <script>
+
 export default {
 	data: function() {
 		return {
@@ -18,12 +19,14 @@ export default {
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
-			this.loading = false
+
 			if (this.identifier != "") {
-				this.$router.push({ path: '/home', params: { identifier: this.identifier}});
+				this.$profile.setProfile(this.identifier, this.username);
+				this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.identifier}`;
+				this.loading = false;
+				this.$router.push({path: '/home'});
 			}
-			
-		}
+		},
 	}
 }
 </script>

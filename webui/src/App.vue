@@ -1,9 +1,18 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import LoginView from './views/LoginView.vue'
+import NavBar from './components/NavBar.vue'
+
 </script>
 <script>
-export default { components: { LoginView } }
+export default {
+	components: {
+		NavBar 
+	},
+	methods: {
+
+	}
+	
+}
 </script>
 
 <template>
@@ -13,6 +22,13 @@ export default { components: { LoginView } }
 		</div>
 	</header>
 	<RouterView />
+	<div class="d-flex min-vh-100 w-100 justify-content-center align-items-center" style="background-color: #383838">
+		<div class="min-vh-100 w-75" style="background-color: #2e2e2e;">		
+			<div class="min-vh-75">
+				<NavBar/>
+			</div>
+		</div>
+	</div>
 </template>
 
 <style>

@@ -299,9 +299,9 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 		return structures.Photos{}, nil
 	}
 
-	rows, err := db.c.Query(`SELECT p.Id, p.User, p.Data, COUNT(l.User), COUNT(c.User)
-								FROM Users u JOIN Follows f ON u.Id=f.Follow
-											 JOIN Photo p ON p.User=f.Followed
+	rows, err := db.c.Query(`SELECT p.Id, u.Username, p.User, p.Data, COUNT(l.User), COUNT(c.User)
+								FROM Follows f JOIN Photo p ON p.User=f.Followed
+											 JOIN Users u ON p.User=u.Id
 											 LEFT JOIN Likes l ON p.Id=l.IdPhoto
 											 LEFT JOIN Comment c ON p.Id=c.IdPhoto
 								WHERE f.Follow="` + user.Id.Value + `" AND p.User NOT IN (SELECT b.Banned FROM Banned b WHERE b.User=f.Follow)
@@ -325,7 +325,7 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 	i := 0
 	feed.Post = make([]structures.Photo, num)
 	for rows.Next() {
-		err = rows.Scan(&feed.Post[i].Id, &feed.Post[i].User, &feed.Post[i].Data, &feed.Post[i].NumLikes, &feed.Post[i].NumComments)
+		err = rows.Scan(&feed.Post[i].Id, &feed.Post[i].Username, &feed.Post[i].Identifier, &feed.Post[i].Data, &feed.Post[i].NumLikes, &feed.Post[i].NumComments)
 		if err != nil {
 			return structures.Photos{}, err
 		}

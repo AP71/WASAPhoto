@@ -12,6 +12,7 @@ type JSONMsg struct {
 }
 
 func WriteResponse(logger logrus.FieldLogger, w http.ResponseWriter, logMessage string, httpStatus int, message string) {
+	w.Header().Set("content-type", "application/json")
 	logger.Warning(logMessage)
 	w.WriteHeader(httpStatus)
 	_ = json.NewEncoder(w).Encode(JSONMsg{Message: message})
