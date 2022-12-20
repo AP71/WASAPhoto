@@ -10,7 +10,6 @@ const Profile = {
     },
 
     isLogged() {
-        console.log(this.identifier!=null && this.username!=null);
         return this.identifier!=null && this.username!=null;
     }
     

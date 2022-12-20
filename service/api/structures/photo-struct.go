@@ -37,7 +37,7 @@ type CommentId struct {
 
 type CommentData struct {
 	IdUser   string `json:"idUser"`
-	Username string `json:"Username"`
+	Username string `json:"username"`
 	Id       int64  `json:"id"`
 	Data     string `json:"data"`
 	Text     string `json:"text"`

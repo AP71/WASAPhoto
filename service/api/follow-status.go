@@ -22,7 +22,7 @@ func (rt *_router) followStatus(w http.ResponseWriter, r *http.Request, ps httpr
 
 	err := rt.db.GetFollowStatus(username, user)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (ban)", http.StatusNotFound, "Interaction not found.")
+		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (follow)", http.StatusNotFound, "Interaction not found.")
 		return
 	} else {
 		w.WriteHeader(http.StatusNoContent)

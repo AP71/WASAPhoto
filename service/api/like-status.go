@@ -28,7 +28,7 @@ func (rt *_router) likeStatus(w http.ResponseWriter, r *http.Request, ps httprou
 
 	err = rt.db.GetLikeStatus(user, photoId)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (ban)", http.StatusNotFound, "Interaction not found.")
+		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (like)", http.StatusNotFound, "Interaction not found.")
 		return
 	} else {
 		w.WriteHeader(http.StatusNoContent)

@@ -424,10 +424,8 @@ paths:
       parameters:
         - name: idCommento
           schema:
-            type: string
-            pattern: ^[a-zA-Z0-9]*$'
-            minLength: 8
-            maxLength: 8
+            type: integer
+            minimum: 0
           in: query
           required: true
           description: Comment identifier.

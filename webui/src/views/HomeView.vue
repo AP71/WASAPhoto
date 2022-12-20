@@ -1,14 +1,16 @@
 <script setup>
-import LoadingSpinner from '../components/LoadingSpinner.vue';
 import Photo from '../components/Photo.vue'
+import LoadingSpinner from '../components/LoadingSpinner.vue'
+import ErrorMsg from '../components/ErrorMsg.vue'
 </script>
 
 <script>
 export default {
 	components: {
-    Photo,
-    LoadingSpinner
-},
+		Photo,
+		LoadingSpinner,
+		ErrorMsg,
+	},
 	data: function() {
 		return {
 			errormsg: null,
@@ -23,44 +25,37 @@ export default {
 			this.errormsg = null;
 			try{
 				let response = await this.$axios.get("/feed/");
-				this.feed.push(response.data.posts);
+				this.feed.push(...response.data.posts);
 				this.nextPageId = response.data.nextFeedPageId;
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
   		},
-		async getPhoto(id) {
-			this.loading = true;
-			this.errormsg = null;
-			try{
-				let response = await this.$axios.get(`/feed/${id}/`);
-				return response.data;
-			} catch(e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
-		}
 	},
 	mounted() {
 		if (this.$profile.identifier==null){
 			this.$router.push({path: '/'});
+		} else {
+			this.getFeed();
 		}
-
-		this.getFeed();
 	}
 }
 </script>
 
 <template>
+	<LoadingSpinner :loading="this.loading"/>
+	<ErrorMsg :msg="this.errormsg"/>
 	<div class="d-flex min-vh-100 w-100 justify-content-center align-items-center" style="background-color: #383838">
-		<div class="min-vh-100 w-75" style="background-color: #2e2e2e;">		
-			<div class="d-flex flex-column min-vh-75">
-				<Photo v-for="photo in feed"/>
+		<div class="d-flex flex-column justify-content-center align-items-center min-vh-100 w-75" style="background-color: #2e2e2e;">		
+			<div style="height: 50px"/>
+			<Photo v-for="post in this.feed" :key="post.photo" v-bind:post="post"/>
+			<div class="d-flex flex-row justify-content-center align-items-center p-4" v-if="nextPageId==0">
+				<div class="rounded rounded-5 fs-5 text-success py-2 px-5" style="background-color: #212121;">
+					Non c'è più niente qui!! Vai a comprare un gelato...
+				</div>
 			</div>
-			<div class="text-white" v-if="nextPageId==0">
-				Fine Feed.
-			</div>
+			<div style="height: 75px"/>
 		</div>
 	</div>
 </template>

@@ -5,8 +5,8 @@ export default {
 </script>
 
 <template>
-	<div class="alert alert-danger" role="alert">
-		{{ msg }}
+	<div v-if="!(this.msg==null)" class="alert alert-danger" role="alert">
+		{{ this.msg }}
 	</div>
 </template>
 
