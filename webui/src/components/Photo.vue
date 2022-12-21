@@ -12,6 +12,8 @@ export default {
 	},
     data: function() {
 		return {
+			errormsg: null,
+			loading: null,
 			blob: null,
 			blobUrl: null,
 			showCommentStatus: false,
@@ -158,7 +160,7 @@ export default {
 			</div>
 		</div>	
 		<div class="commentAreaInput">
-			<textarea v-model="this.newComment" class="textArea border border-success" placeholder="Commento" style="background-color: #212121;"></textarea>
+			<textarea v-model="this.newComment" class="textArea border border-2 border-success" placeholder="Commento" style="background-color: #212121;"></textarea>
 			<i class="icon bi bi-send-fill text-success fs-4" @click="sendComment"></i>
 		</div>
 		<div v-if="this.showCommentStatus" class="commentArea">
@@ -251,6 +253,8 @@ export default {
 		justify-content: space-between;
 		align-items: center;
 		width: 90%;
+		overflow: scroll;
+		max-height: 150px;
 		padding-bottom: 1rem;
 	}
 
