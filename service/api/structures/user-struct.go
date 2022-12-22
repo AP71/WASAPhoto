@@ -22,7 +22,7 @@ type User struct {
 }
 
 type UserPage struct {
-	Id               string    `json:"identifier"`
+	Id               string    `json:"id"`
 	Username         string    `json:"username"`
 	Photos           []PhotoID `json:"photos"`
 	NextPhotosPageId int64     `json:"nextPhotosPageId"`

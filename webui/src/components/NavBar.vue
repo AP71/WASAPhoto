@@ -1,22 +1,25 @@
 <script>
 export default {
 	props: ['msg'],
-    data: function() {
-		return {
-			errormsg: null,
-			loading: false,
-		}
-	},
 	methods: {
 		setStatus(i) {
 			if (i==0) {
 				this.$router.push({path: '/home'});
+				document.getElementById("home").setAttribute('class', 'icon bi bi-house text-success');
+				document.getElementById("search").setAttribute('class', 'icon bi bi-search text-white');
+				document.getElementById("profile").setAttribute('class', 'icon bi bi-person text-white');
 			}
 			if (i==1) {
 				this.$router.push({path: '/search'});
+				document.getElementById("home").setAttribute('class', 'icon bi bi-house text-white');
+				document.getElementById("search").setAttribute('class', 'icon bi bi-search text-success');
+				document.getElementById("profile").setAttribute('class', 'icon bi bi-person text-white');
 			}
 			if (i==2) {
-				this.$router.push({path: '/profile'});
+				this.$router.push({path: `/profiles/${this.$profile.username}`});
+				document.getElementById("home").setAttribute('class', 'icon bi bi-house text-white');
+				document.getElementById("search").setAttribute('class', 'icon bi bi-search text-white');
+				document.getElementById("profile").setAttribute('class', 'icon bi bi-person text-success');
 			}
 		}
 	}
@@ -26,13 +29,13 @@ export default {
 <template>
 	<div class="navbar">
 		<div class="element" @click="setStatus(0)">
-            <i class="icon bi bi-house"></i>
+            <i id="home" class="icon bi bi-house"></i>
         </div>
         <div class="element" @click="setStatus(1)">
-            <i class="icon bi bi-search"></i>
+            <i id="search" class="icon bi bi-search"></i>
         </div>
         <div class="element" @click="setStatus(2)">
-            <i class="icon bi bi-person"></i>
+            <i id="profile" class="icon bi bi-person"></i>
         </div>
 	</div>
 </template>

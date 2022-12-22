@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
 
@@ -33,7 +34,10 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	user.Username.Value, err = rt.db.UpdateUsername(user, new)
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "UNIQUE constraint failed") {
+		errors.WriteResponse(rt.baseLogger, w, "Conflict error", http.StatusConflict, "Username already in use from another user")
+		return
+	} else if err != nil {
 		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
 		return
 	}

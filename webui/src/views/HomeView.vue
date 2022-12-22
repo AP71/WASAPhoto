@@ -25,8 +25,10 @@ export default {
 			this.errormsg = null;
 			try{
 				let response = await this.$axios.get("/feed/");
-				this.feed.push(...response.data.posts);
-				this.nextPageId = response.data.nextFeedPageId;
+				if (!(response.status === 204)) {
+					this.feed.push(...response.data.posts);
+					this.nextPageId = response.data.nextFeedPageId;
+				}
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
@@ -44,11 +46,11 @@ export default {
 </script>
 
 <template>
-	<LoadingSpinner :loading="this.loading"/>
-	<ErrorMsg :msg="this.errormsg"/>
 	<div class="d-flex min-vh-100 w-100 justify-content-center align-items-center" style="background-color: #383838">
 		<div class="d-flex flex-column justify-content-center align-items-center min-vh-100 w-75" style="background-color: #2e2e2e;">		
-			<div style="height: 50px"/>
+			<div style="height: 60px"/>
+			<LoadingSpinner :loading="this.loading"/>
+			<ErrorMsg :msg="this.errormsg"/>
 			<Photo v-for="post in this.feed" :key="post.photo" v-bind:post="post"/>
 			<div class="d-flex flex-row justify-content-center align-items-center p-4" v-if="nextPageId==0">
 				<div class="rounded rounded-5 fs-5 text-success py-2 px-5" style="background-color: #212121;">

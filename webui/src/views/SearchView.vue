@@ -35,7 +35,7 @@ export default {
 			this.loading = false;
         },
         openProfile(user) {
-            this.$router.push({ name: `profiles`, params: {username: user.username} });
+            this.$router.push({ path: `/profiles/${user.username}` });
         }
 
     },
@@ -43,7 +43,7 @@ export default {
         if (this.$profile.identifier == null) {
             this.$router.push({ path: '/' });
         } else {
-
+            
         }
     }
 }

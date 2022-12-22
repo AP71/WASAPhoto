@@ -119,6 +119,9 @@ export default {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
+		},
+		visitProfile() {
+			this.$router.push({ path: `/profiles/${this.post.username}` });
 		}
 	},
 	mounted() {
@@ -134,7 +137,7 @@ export default {
 	<ErrorMsg :msg="this.errormsg"/>
 	<div class="card" style="background-color: #212121;">
         <div class="PhotoHeader">
-			<div class="username fw-bold fs-3">
+			<div class="username fw-bold fs-3" @click="visitProfile">
 				{{ this.post.username }}
 			</div>
 			<div class="data fs-6"> 
