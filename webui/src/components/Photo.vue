@@ -112,16 +112,20 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			try{
-				let response = await this.$axios.get(`/feed/${this.post.photo}/comments/`);
-				this.comments = response.data.comments
-				this.nextCommentPageId = response.data.nextCommentPageId;
+				const nextPage = this.nextCommentPageId;
+				let response = nextPage == 0?  	await this.$axios.get(`/feed/${this.post.photo}/comments/`) : 
+												await this.$axios.get(`/feed/${this.post.photo}/comments/?pageId=${this.nextCommentPageId}`) ;
+				if (!(response.status === 204)) {
+					nextPage == 0 ? this.comments = response.data.comments : this.comments.push(...response.data.comments);
+					this.nextCommentPageId = response.data.nextCommentPageId;
+				}
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
 		},
-		visitProfile() {
-			this.$router.push({ path: `/profiles/${this.post.username}` });
+		visitProfile(username) {
+			this.$router.push({ path: `/profiles/${username}` });
 		}
 	},
 	mounted() {
@@ -137,11 +141,17 @@ export default {
 	<ErrorMsg :msg="this.errormsg"/>
 	<div class="card" style="background-color: #212121;">
         <div class="PhotoHeader">
-			<div class="username fw-bold fs-3" @click="visitProfile">
+			<div class="username fw-bold fs-3" @click="visitProfile(this.post.username)">
 				{{ this.post.username }}
 			</div>
-			<div class="data fs-6"> 
-				{{ this.post.data }}
+			<div class="d-flex flex-row justify-content-end align-items-center w-75">
+				<div class="data fs-6"> 
+					{{ this.post.data }}
+				</div>
+				<div v-if="this.post.username==this.$profile.username" class="elimina fs-6">
+					<i class="icon bi bi-trash3-fill text-danger fs-3" @click="deletePhoto"></i>
+				</div>
+				
 			</div>
 		</div>		
 		<div class="d-flex justify-content-center align-items-center">
@@ -169,7 +179,7 @@ export default {
 		<div v-if="this.showCommentStatus" class="commentArea">
 			<div v-for="comment in this.comments" key="comment" class="comment pb-2">
 				<div class="dettagli">
-					<div class="fw-bolder fs-5 text-white pe-4">
+					<div class="fw-bolder fs-5 text-white pe-4" @click="this.visitProfile(comment.username)">
 						{{ comment.username }}
 					</div>
 					<div class="fw-normal fs-6 text-white">
@@ -184,6 +194,9 @@ export default {
 						Elimina
 					</div>
 				</div>
+			</div>
+			<div v-if="this.nextCommentPageId!=0" class="p-4">
+				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-5" style="width: 150px" @click="this.getComments">...</button>
 			</div>
 		</div>
     </div>
@@ -201,6 +214,7 @@ export default {
 	}
 	.PhotoHeader {
 		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
 		width: 90%;
@@ -224,6 +238,15 @@ export default {
 		align-items: center;
 		width: 90%;
 		padding-bottom: 1rem;
+		color: white;
+	}
+
+	.elimina {
+		display: flex;
+		justify-content: right;
+		align-items: center;
+		padding-bottom: 1rem;
+		padding-left: 1rem;
 		color: white;
 	}
 	.Buttons {

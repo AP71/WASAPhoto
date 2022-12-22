@@ -24,8 +24,11 @@ export default {
             this.loading = true;
 			this.errormsg = null;
 			try{
-				let response = await this.$axios.get(`/profiles/?userToSearch=${this.userToSearch}`);
-				this.users.push(...response.data.users);
+                const nextPage = this.nextPageId;
+				let response = nextPage == 0?  
+                                await this.$axios.get(`/profiles/?userToSearch=${this.userToSearch}`) : 
+                                await this.$axios.get(`/profiles/?userToSearch=${this.userToSearch}&pageId=${this.nextPageId}`) ;
+				nextPage == 0 ? this.users = response.data.users : this.users.push(...response.data.users);
 				this.nextPageId = response.data.nextUsersPageId;
                 this.userToSearch = null;
 			} catch(e) {
@@ -51,11 +54,16 @@ export default {
 
 <template>
     <div class="d-flex justify-content-center align-items-start min-vh-100 w-100" style="background-color: #383838">
-        <div class="d-flex flex-column justify-content-centeralign-items-start min-vh-100 w-75" style="background-color: #2e2e2e;">		
+        <div class="d-flex flex-column justify-content-start align-items-center min-vh-100 w-75" style="background-color: #2e2e2e;">		
 			<div class="cerca">
-                <input v-model="this.userToSearch" class="inputBar border border-2 border-success fs-4" style="background-color: #383838;" placeholder="Username"/>
-                <LoadingSpinner :loading="this.loading" />
-                <i class="ps-4 icon bi bi-send-fill text-success fs-4" @click="getUsers"></i>
+                <input v-model="this.userToSearch" class="inputBar border border-1 border-success fs-4" style="background-color: #383838;" placeholder="Username"/>
+                <LoadingSpinner :loading="this.loading"/>
+                <div class="px-3">
+                    <button type="button" @click="this.getUsers" class="btn btn-outline-success rounded-pill fs-5">
+                        Search
+                    </button>  
+                </div>
+                   
             </div>
             <div class="d-flex flex-column justify-content-center align-items-center pt-4">
                 <div v-for="user in this.users" key="user.identifier" class="result" @click="openProfile(user)">
@@ -66,6 +74,9 @@ export default {
                     </div>
                     <div style="height: 50px; background-color: #2e2e2e;"/>
                 </div>
+                <div v-if="this.nextPageId!=0" class="p-4">
+				    <button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="this.getFeed">...</button>
+			    </div>
             </div>
 		</div>
     </div>

@@ -1,6 +1,5 @@
 <script>
 export default {
-	props: ['msg'],
 	methods: {
 		setStatus(i) {
 			if (i==0) {
@@ -9,13 +8,13 @@ export default {
 				document.getElementById("search").setAttribute('class', 'icon bi bi-search text-white');
 				document.getElementById("profile").setAttribute('class', 'icon bi bi-person text-white');
 			}
-			if (i==1) {
+			else if (i==1) {
 				this.$router.push({path: '/search'});
 				document.getElementById("home").setAttribute('class', 'icon bi bi-house text-white');
 				document.getElementById("search").setAttribute('class', 'icon bi bi-search text-success');
 				document.getElementById("profile").setAttribute('class', 'icon bi bi-person text-white');
 			}
-			if (i==2) {
+			else if (i==2) {
 				this.$router.push({path: `/profiles/${this.$profile.username}`});
 				document.getElementById("home").setAttribute('class', 'icon bi bi-house text-white');
 				document.getElementById("search").setAttribute('class', 'icon bi bi-search text-white');

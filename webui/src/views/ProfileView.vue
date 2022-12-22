@@ -19,7 +19,7 @@ export default {
             id: null,
             username: null,
             photos: [],
-            nextPhotosPageId: null,
+            nextPhotosPageId: 0,
             followers: 0,
             following: 0,
             photoCounter: 0,
@@ -35,13 +35,22 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			try{
-				let response = await this.$axios.get(`/profiles/${this.username}/`);
-				this.id = response.data.id;
-                this.photos.push(...response.data.photos);
-                this.nextPhotosPageId = response.data.nextPhotosPageId;
-                this.followers = response.data.followers;
-                this.following = response.data.following;
-                this.photoCounter = response.data.photoCounter;
+
+                const nextPage = this.nextPhotosPageId;
+				let response = nextPage == 0?  
+                                await this.$axios.get(`/profiles/${this.username}/`) : 
+                                await this.$axios.get(`/profiles/${this.username}/?pageId=${this.nextPhotosPageId}`);
+                if (nextPage == 0) {    
+                    this.photos = response.data.photos;
+                    this.id = response.data.id;
+                    this.nextPhotosPageId = response.data.nextPhotosPageId;
+                    this.followers = response.data.followers;
+                    this.following = response.data.following;
+                    this.photoCounter = response.data.photoCounter;
+                } else {
+                    this.photos.push(...response.data.photos);
+                    this.nextPhotosPageId = response.data.nextPhotosPageId;
+                }
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
@@ -287,7 +296,9 @@ export default {
                 </div>
                 <LoadingSpinner v-if="loading"/>
             </div>
-
+            <div>
+                
+            </div>
 		</div>
     </div>
 </template>
