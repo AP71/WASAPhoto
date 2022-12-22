@@ -22,13 +22,13 @@ type User struct {
 }
 
 type UserPage struct {
-	Id               string    `json:"id"`
-	Username         string    `json:"username"`
-	Photos           []PhotoID `json:"photos"`
-	NextPhotosPageId int64     `json:"nextPhotosPageId"`
-	Followers        int64     `json:"followers"`
-	Following        int64     `json:"following"`
-	PhotoCounter     int64     `json:"photoCounter"`
+	Id               string         `json:"id"`
+	Username         string         `json:"username"`
+	Photos           []PhotoDetails `json:"photos"`
+	NextPhotosPageId int64          `json:"nextPhotosPageId"`
+	Followers        int64          `json:"followers"`
+	Following        int64          `json:"following"`
+	PhotoCounter     int64          `json:"photoCounter"`
 }
 
 type UserData struct {

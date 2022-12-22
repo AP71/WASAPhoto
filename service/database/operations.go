@@ -145,7 +145,7 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 		return structures.UserPage{}, err
 	}
 
-	rows, err := db.c.Query(`SELECT p.Id
+	rows, err := db.c.Query(`SELECT p.Id, p.Data
 								FROM Users AS u LEFT JOIN Photo AS p ON u.Id=p.User
 								WHERE u.Id="` + user.Id + `"
 								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
@@ -165,13 +165,22 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	}
 
 	i := 0
-	user.Photos = make([]structures.PhotoID, num)
+	user.Photos = make([]structures.PhotoDetails, num)
 	if num > 0 {
 		for rows.Next() {
-			err = rows.Scan(&user.Photos[i].Value)
+			err = rows.Scan(&user.Photos[i].Id, &user.Photos[i].Data)
 			if err != nil {
 				return structures.UserPage{}, err
 			}
+
+			var image structures.Photo
+			image.Id = user.Photos[i].Id
+			err = db.getNumberOfLikesAndNumberOfComments(&image)
+			if err != nil {
+				return structures.UserPage{}, err
+			}
+			user.Photos[i].NumLikes = image.NumLikes
+			user.Photos[i].NumComments = image.NumComments
 			i++
 		}
 		err = rows.Err()

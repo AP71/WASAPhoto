@@ -527,6 +527,29 @@ components:
       example: 1452
       minimum: 0
       description: Photo identifier.
+    photoDetails:
+      title: Photo details.
+      description: |
+        Represents id, data, number of likes, number of comment of a photo.
+        type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/integerPhoto'
+        data:
+          type: string
+          format: date-time
+          description: Upload date
+          example: "2022-01-01T00:00:00Z"
+        numberOfLikes:
+          type: integer
+          example: 540
+          minimum: 0
+          description: Number of likes.
+        numberOfComments:
+          type: integer
+          example: 15
+          minimum: 0
+          description: Number of comments.
     userProfile:
       title: User's Profile
       description: |
@@ -540,9 +563,7 @@ components:
         photos:
           type: array
           items:
-            properties:
-              photoId:
-                $ref: '#/components/schemas/integerPhoto'
+            $ref: '#/components/schemas/photoDetails' 
           minItems: 1
           maxItems: 10
           description: List of photos.

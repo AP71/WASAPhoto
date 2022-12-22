@@ -13,6 +13,13 @@ type Image struct {
 	Value []byte `json:"data"`
 }
 
+type PhotoDetails struct {
+	Id          int64  `json:"photo"`
+	Data        string `json:"data"`
+	NumLikes    int64  `json:"numberOfLikes"`
+	NumComments int64  `json:"numberOfComments"`
+}
+
 type Photo struct {
 	Id          int64  `json:"photo"`
 	Data        string `json:"data"`
