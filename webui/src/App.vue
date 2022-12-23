@@ -33,7 +33,7 @@ export default {
 			WASA Photo
 		</div>
 	</header>
-	<RouterView/>
+	<RouterView :key="this.$route.path"/>
 	<NavBar v-if="this.isLogged" />
 </template>
 

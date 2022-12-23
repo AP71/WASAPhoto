@@ -6,12 +6,14 @@ import ErrorMsg from '../components/ErrorMsg.vue'
 <script>
 export default {
 	props: ['post'],
+	emits: ['photoDelated'],
 	components: {
 		LoadingSpinner,
 		ErrorMsg,
 	},
     data: function() {
 		return {
+			postDetails: Object.assign({}, this.post),
 			errormsg: null,
 			loading: null,
 			blob: null,
@@ -31,7 +33,7 @@ export default {
 				let response = await this.$axios.get(`/feed/${this.post.photo}/`, { responseType: 'blob'});
 				this.blob = response.data
 				this.blobUrl = URL.createObjectURL(this.blob);
-				document.getElementById('post-image').src = this.blobUrl;
+				document.getElementById(`${this.post.photo}`).src = this.blobUrl;
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
@@ -59,7 +61,7 @@ export default {
 			try{
 				let response = await this.$axios.put(`/feed/${this.post.photo}/likes/${this.$profile.username}`);
 				this.liked = true;
-				this.post.numberOfLikes += 1;
+				this.postDetails.numberOfLikes += 1;
 			} catch(e) {
 				this.errormsg = e.toString();
 				if (e.response.status == 409) {
@@ -74,7 +76,7 @@ export default {
 			try{
 				let response = await this.$axios.delete(`/feed/${this.post.photo}/likes/${this.$profile.username}`);
 				this.liked = false;
-				this.post.numberOfLikes -= 1;
+				this.postDetails.numberOfLikes -= 1;
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
@@ -88,7 +90,7 @@ export default {
 			this.errormsg = null;
 			try{
 				let response = await this.$axios.delete(`/feed/${this.post.photo}/comments/${this.$profile.username}?idCommento=${commentId}`);
-				this.post.numberOfComments -= 1;
+				this.postDetails.numberOfComments -= 1;
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
@@ -100,7 +102,7 @@ export default {
 				this.errormsg = null;
 				try{
 					let response = await this.$axios.post(`/feed/${this.post.photo}/comments/${this.$profile.username}`, {text: this.newComment});
-					this.post.numberOfComments += 1;
+					this.postDetails.numberOfComments += 1;
 					this.newComment = null
 				} catch(e) {
 					this.errormsg = e.toString();
@@ -126,6 +128,17 @@ export default {
 		},
 		visitProfile(username) {
 			this.$router.push({ path: `/profiles/${username}` });
+		},
+		async deletePhoto() {
+			this.loading = true;
+			this.errormsg = null;
+			try{
+				let response = await this.$axios.delete(`/profiles/${this.$profile.username}/photos/${this.post.photo}`);
+				this.$emit('photoDelated', this.post.photo);
+			} catch(e) {
+				this.errormsg = e.toString();
+			}
+			this.loading = false;
 		}
 	},
 	mounted() {
@@ -142,32 +155,31 @@ export default {
 	<div class="card" style="background-color: #212121;">
         <div class="PhotoHeader">
 			<div class="username fw-bold fs-3" @click="visitProfile(this.post.username)">
-				{{ this.post.username }}
+				{{ this.postDetails.username }}
 			</div>
 			<div class="d-flex flex-row justify-content-end align-items-center w-75">
 				<div class="data fs-6"> 
-					{{ this.post.data }}
+					{{ this.postDetails.data }}
 				</div>
-				<div v-if="this.post.username==this.$profile.username" class="elimina fs-6">
+				<div v-if="this.postDetails.username==this.$profile.username" class="elimina fs-6">
 					<i class="icon bi bi-trash3-fill text-danger fs-3" @click="deletePhoto"></i>
 				</div>
-				
 			</div>
 		</div>		
 		<div class="d-flex justify-content-center align-items-center">
-			<img id="post-image" class="image">
+			<img :id="this.postDetails.photo" class="image">
 		</div>
 		<div class="Buttons">
 			<div class="d-flex justify-content-start align-items-center min-vw-25 max-vw-25">
 				<div class="text-white fs-bold fs-4 pe-2">
-					{{ this.post.numberOfLikes }}
+					{{ this.postDetails.numberOfLikes }}
 				</div>
 				<i v-if="this.liked" class="icon bi bi-heart-fill" @click="removeLike" style="color:red"></i>
 				<i v-else class="icon bi bi-heartbreak" @click="setLike" style="color:red"></i>
 			</div>
 			<div class="d-flex justify-content-center align-items-center min-vw-25 max-vw-25">
 				<div class="text-white fs-bold fs-4 pe-2">
-					{{ this.post.numberOfComments }}
+					{{ this.postDetails.numberOfComments }}
 				</div>
 				<i class="icon bi bi-chat-left-text" @click="showComment"></i>
 			</div>
@@ -177,7 +189,7 @@ export default {
 			<i class="icon bi bi-send-fill text-success fs-4" @click="sendComment"></i>
 		</div>
 		<div v-if="this.showCommentStatus" class="commentArea">
-			<div v-for="comment in this.comments" key="comment" class="comment pb-2">
+			<div v-for="comment in this.comments" v-bind:key="comment" class="comment pb-2">
 				<div class="dettagli">
 					<div class="fw-bolder fs-5 text-white pe-4" @click="this.visitProfile(comment.username)">
 						{{ comment.username }}
@@ -190,7 +202,7 @@ export default {
 					<div class="text-bold text-success fs-6 pe-4">
 						{{ comment.data }}
 					</div>
-					<div v-if="comment.idUser==this.$profile.identifier || this.post.identifier==this.$axios.identifier" class="text-decoration-underline text-success fs-6" @click="deleteComment(comment.id)">
+					<div v-if="comment.idUser==this.$profile.identifier || this.postDetails.identifier==this.$axios.identifier" class="text-decoration-underline text-success fs-6" @click="deleteComment(comment.id)">
 						Elimina
 					</div>
 				</div>
@@ -200,6 +212,7 @@ export default {
 			</div>
 		</div>
     </div>
+	<div class="p-2"/>
 </template>
 
 <style scoped>

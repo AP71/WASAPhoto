@@ -7,6 +7,7 @@ import { compile } from 'vue';
 
 <script>
 export default {
+    emits: ['photoDelated'],
     components: {
         LoadingSpinner,
         ErrorMsg,
@@ -19,6 +20,9 @@ export default {
             id: null,
             username: null,
             photos: [],
+            blob: [],
+			blobUrl: [],
+            index: 0,
             nextPhotosPageId: 0,
             followers: 0,
             following: 0,
@@ -35,12 +39,12 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			try{
-
                 const nextPage = this.nextPhotosPageId;
 				let response = nextPage == 0?  
                                 await this.$axios.get(`/profiles/${this.username}/`) : 
                                 await this.$axios.get(`/profiles/${this.username}/?pageId=${this.nextPhotosPageId}`);
                 if (nextPage == 0) {    
+                    this.index = 0;
                     this.photos = response.data.photos;
                     this.id = response.data.id;
                     this.nextPhotosPageId = response.data.nextPhotosPageId;
@@ -50,6 +54,9 @@ export default {
                 } else {
                     this.photos.push(...response.data.photos);
                     this.nextPhotosPageId = response.data.nextPhotosPageId;
+                }
+                for (this.index; this.index<this.photos.length; this.index++) {
+                    this.photos[this.index].username = this.username;
                 }
 			} catch(e) {
 				this.errormsg = e.toString();
@@ -86,7 +93,6 @@ export default {
             } else {
                 this.getUserData();
             }
-			
             this.loading = false;
         },
         async follow() {
@@ -168,7 +174,7 @@ export default {
                 const fileInput = document.getElementById('fileInput');
                 const file = fileInput.files[0];
 				let response = await this.$axios.post(`/profiles/${this.username}/photos/`, file);
-                this.getUserData();
+                this.getStatus();
                 this.dialog = false;
 			} catch(e) {
 				if (e.response.status == 400) {
@@ -196,6 +202,15 @@ export default {
         closeDialog() {
             this.dialog = false;
         },
+        logout() {
+            this.$profile.logout();
+            this.$router.push({path: '/'});
+        },
+        eventHandler(eventData) {
+            this.nextPhotosPageId = 0;
+            this.getStatus();
+        }
+
     },
     mounted() {
         if (this.$profile.identifier==null){
@@ -287,18 +302,30 @@ export default {
                     </button>
                 </div>
                 <div v-else class="d-flex flex-row justify-content-evenly align-items-center w-100">
-                    <button type="button" @click="this.showDialog(false)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 150px">
+                    <button type="button" @click="this.showDialog(false)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 10px">
                         Change username
                     </button>
-                    <button type="button" @click="this.showDialog(true)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 150px">
+                    <button type="button" @click="this.showDialog(true)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 100px">
                         Upload photo
-                    </button>                        
+                    </button>
+                    <button type="button" @click="this.logout" class="btn btn-outline-danger rounded-pill fs-4 w-25" style="width: 100px">
+                        Logout
+                    </button>                            
                 </div>
                 <LoadingSpinner v-if="loading"/>
             </div>
-            <div>
-                
+            <div class="d-flex flex-column justify-content-center align-items-center w-100 pt-5">
+                <Photo v-for="photo in this.photos" v-bind:key="photo.photo" v-bind:post="photo" v-on:photoDelated="eventHandler"/>
             </div>
+            <div v-if="this.nextPhotosPageId==0" class="d-flex flex-row justify-content-center align-items-center p-4">
+				<div class="rounded rounded-5 fs-5 text-success py-2 px-5" style="background-color: #212121;">
+					Non c'è più niente qui!! Vai a comprare un gelato...
+				</div>
+			</div>
+			<div v-else class="p-4">
+				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="this.getUserData">...</button>
+			</div>
+            <div style="height: 75px;"/>
 		</div>
     </div>
 </template>

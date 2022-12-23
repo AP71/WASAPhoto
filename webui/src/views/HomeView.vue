@@ -52,7 +52,7 @@ export default {
 			<div style="height: 60px"/>
 			<LoadingSpinner :loading="this.loading"/>
 			<ErrorMsg :msg="this.errormsg"/>
-			<Photo v-for="post in this.feed" :key="post.photo" v-bind:post="post"/>
+			<Photo v-for="post in this.feed" v-bind:key="post.photo" v-bind:post="post"/>
 			<div v-if="this.nextPageId==0" class="d-flex flex-row justify-content-center align-items-center p-4">
 				<div class="rounded rounded-5 fs-5 text-success py-2 px-5" style="background-color: #212121;">
 					Non c'è più niente qui!! Vai a comprare un gelato...

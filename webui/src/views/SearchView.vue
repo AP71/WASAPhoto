@@ -38,7 +38,7 @@ export default {
 			this.loading = false;
         },
         openProfile(user) {
-            this.$router.push({ path: `/profiles/${user.username}` });
+            this.$router.push({path: `/profiles/${user.username}`});
         }
 
     },
@@ -63,10 +63,10 @@ export default {
                         Search
                     </button>  
                 </div>
-                   
             </div>
+            <ErrorMsg :msg="this.errormsg" class="py-2"/>
             <div class="d-flex flex-column justify-content-center align-items-center pt-4">
-                <div v-for="user in this.users" key="user.identifier" class="result" @click="openProfile(user)">
+                <div v-for="user in this.users" v-bind:key="user.identifier" class="result" @click="this.openProfile(user)">
                     <div class="d-flex justify-content-center align-items-start min-vw-100">
                         <div class="resultMod fw-bold fs-4">
                             {{ user.username }}

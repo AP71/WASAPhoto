@@ -10,6 +10,11 @@ const Profile = {
         this.isLogged = true;
     },
 
+    logout() {
+        this.identifier = null;
+        this.username = null;
+        this.isLogged = false;
+    }
     
 }
 

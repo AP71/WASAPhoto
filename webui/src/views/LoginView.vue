@@ -1,6 +1,15 @@
+<script setup>
+import LoadingSpinner from '../components/LoadingSpinner.vue'
+import ErrorMsg from '../components/ErrorMsg.vue'
+</script>
+
 <script>
 
 export default {
+	components: {
+		LoadingSpinner,
+		ErrorMsg,
+	},
 	data: function() {
 		return {
 			errormsg: null,

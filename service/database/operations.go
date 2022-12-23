@@ -148,6 +148,7 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 	rows, err := db.c.Query(`SELECT p.Id, p.Data
 								FROM Users AS u LEFT JOIN Photo AS p ON u.Id=p.User
 								WHERE u.Id="` + user.Id + `"
+								ORDER BY p.Data DESC
 								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
 	if err != nil {
 		return structures.UserPage{}, err

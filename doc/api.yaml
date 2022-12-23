@@ -533,7 +533,7 @@ components:
         Represents id, data, number of likes, number of comment of a photo.
         type: object
       properties:
-        id:
+        photo:
           $ref: '#/components/schemas/integerPhoto'
         data:
           type: string
