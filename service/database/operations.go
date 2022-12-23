@@ -210,6 +210,25 @@ func (db *appdbimpl) BanUser(username string, byUsername structures.User) error 
 		return err
 	}
 
+	deleteUserSQL := `DELETE FROM Follows WHERE (Follow=? AND Followed=?) OR (Follow=? AND Followed=?)`
+	statement, err = db.c.Prepare(deleteUserSQL)
+	if err != nil {
+		return err
+	}
+	res, err := statement.Exec(byUsername.Id.Value, usernameId, usernameId, byUsername.Id.Value)
+	if err != nil {
+		return err
+	}
+
+	i, err := res.RowsAffected()
+	if i == 0 {
+		return errors.New("relationship not found")
+	} else if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
 	defer statement.Close()
 	return nil
 }

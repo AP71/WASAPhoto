@@ -128,11 +128,13 @@ export default {
 			try{
 				let response = await this.$axios.put(`/profiles/${this.username}/banned/${this.$profile.username}`);
 				this.banned = true;
+                this.followed = false;
                 this.reset();
 			} catch(e) {
 				this.errormsg = e.toString();
 				if (e.response.status == 409) {
 					this.banned = true;
+                    this.followed = false;
 				}
 			}
 			this.loading = false;
@@ -288,7 +290,7 @@ export default {
             </div>
             <div class="d-flex flex-row justify-content-evenly align-items-center w-100 fs-4 pt-4">
                 <div v-if="this.id!=this.$profile.identifier" class="d-flex flex-row justify-content-evenly align-items-center w-100">
-                    <button v-if="!this.followed" @click="follow" type="button" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 150px">
+                    <button v-if="!this.followed" @click="follow" :disabled="this.banned" type="button" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 150px">
                         Segui
                     </button>
                     <button v-else type="button" @click="unfollow" class="btn btn-outline-danger rounded-pill fs-4 w-25" style="width: 150px">
