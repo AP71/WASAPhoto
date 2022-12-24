@@ -4,35 +4,44 @@ export default {
 		setStatus(i) {
 			if (i==0) {
 				this.$router.push({path: '/home'});
+				document.getElementById("1").setAttribute('class', 'icon bi bi-house text-success');
+				document.getElementById("2").setAttribute('class', 'icon bi bi-search text-white');
+				document.getElementById("3").setAttribute('class', 'icon bi bi-person text-white');
 			}
 			else if (i==1) {
 				this.$router.push({path: '/search'});
+				document.getElementById("1").setAttribute('class', 'icon bi bi-house text-white');
+				document.getElementById("2").setAttribute('class', 'icon bi bi-search text-success');
+				document.getElementById("3").setAttribute('class', 'icon bi bi-person text-white');
 			}
 			else if (i==2) {
 				this.$router.push({path: `/profiles/${this.$profile.username}`});
+				document.getElementById("1").setAttribute('class', 'icon bi bi-house text-white');
+				document.getElementById("2").setAttribute('class', 'icon bi bi-search text-white');
+				document.getElementById("3").setAttribute('class', 'icon bi bi-person text-success');
 			}
 		}
-	}
+	},
 }
 </script>
 
 <template>
 	<div class="navbar">
 		<div class="element" @click="setStatus(0)">
-            <i class="icon bi bi-house"></i>
+            <i id="1" class="icon bi bi-house text-success"></i>
         </div>
         <div class="element" @click="setStatus(1)">
-            <i class="icon bi bi-search"></i>
+            <i id="2" class="icon bi bi-search text-white"></i>
         </div>
         <div class="element" @click="setStatus(2)">
-            <i class="icon bi bi-person"></i>
+            <i id="3" class="icon bi bi-person text-white"></i>
         </div>
 	</div>
 </template>
 
 <style>
     .icon {
-        color: white;
+		color: white;
         font-size: 2rem;
     }
     .navbar {
