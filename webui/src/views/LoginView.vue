@@ -53,8 +53,8 @@ export default {
 				<button type="button" class="btn btn-outline-success rounded-pill fs-4" :disabled="username.length<3 || username.length>16" style="width: 150px" @click="doLogin">Login</button>
 			</div>			
 		</div>
-		<ErrorMsg v-if="errormsg" :msg="errormsg"/>
-		<LoadingSpinner v-if="loading"/>
+		<ErrorMsg v-if="this.errormsg" :msg="this.errormsg"/>
+		<LoadingSpinner v-if="this.loading"/>
 	</div>	
 </template>
 

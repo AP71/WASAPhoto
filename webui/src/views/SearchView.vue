@@ -59,14 +59,14 @@ export default {
                 <input v-model="this.userToSearch" class="inputBar border border-1 border-success fs-4" style="background-color: #383838;" placeholder="Username"/>
                 <LoadingSpinner :loading="this.loading"/>
                 <div class="px-3">
-                    <button type="button" @click="this.getUsers" class="btn btn-outline-success rounded-pill fs-5">
+                    <button type="button" @click="getUsers" class="btn btn-outline-success rounded-pill fs-5">
                         Search
                     </button>  
                 </div>
             </div>
             <ErrorMsg :msg="this.errormsg" class="py-2"/>
             <div class="d-flex flex-column justify-content-center align-items-center pt-4">
-                <div v-for="user in this.users" v-bind:key="user.identifier" class="result" @click="this.openProfile(user)">
+                <div v-for="user in this.users" v-bind:key="user.identifier" class="result" @click="openProfile(user)">
                     <div class="d-flex justify-content-center align-items-start min-vw-100">
                         <div class="resultMod fw-bold fs-4">
                             {{ user.username }}
@@ -75,7 +75,7 @@ export default {
                     <div style="height: 50px; background-color: #2e2e2e;"/>
                 </div>
                 <div v-if="this.nextPageId!=0" class="p-4">
-				    <button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="this.getFeed">...</button>
+				    <button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="getFeed">...</button>
 			    </div>
             </div>
 		</div>

@@ -59,7 +59,7 @@ export default {
 				</div>
 			</div>
 			<div v-else class="p-4">
-				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="this.getFeed">...</button>
+				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="getFeed">...</button>
 			</div>
 			<div style="height: 75px"/>
 		</div>

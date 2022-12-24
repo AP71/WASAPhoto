@@ -191,7 +191,7 @@ export default {
 		<div v-if="this.showCommentStatus" class="commentArea">
 			<div v-for="comment in this.comments" v-bind:key="comment" class="comment pb-2">
 				<div class="dettagli">
-					<div class="fw-bolder fs-5 text-white pe-4" @click="this.visitProfile(comment.username)">
+					<div class="fw-bolder fs-5 text-white pe-4" @click="visitProfile(comment.username)">
 						{{ comment.username }}
 					</div>
 					<div class="fw-normal fs-6 text-white">
@@ -208,7 +208,7 @@ export default {
 				</div>
 			</div>
 			<div v-if="this.nextCommentPageId!=0" class="p-4">
-				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-5" style="width: 150px" @click="this.getComments">...</button>
+				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-5" style="width: 150px" @click="getComments">...</button>
 			</div>
 		</div>
     </div>

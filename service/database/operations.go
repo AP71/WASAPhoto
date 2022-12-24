@@ -205,6 +205,8 @@ func (db *appdbimpl) BanUser(username string, byUsername structures.User) error 
 	if err != nil {
 		return err
 	}
+	defer statement.Close()
+
 	_, err = statement.Exec(byUsername.Id.Value, usernameId)
 	if err != nil {
 		return err
@@ -215,21 +217,11 @@ func (db *appdbimpl) BanUser(username string, byUsername structures.User) error 
 	if err != nil {
 		return err
 	}
-	res, err := statement.Exec(byUsername.Id.Value, usernameId, usernameId, byUsername.Id.Value)
+	_, err = statement.Exec(byUsername.Id.Value, usernameId, usernameId, byUsername.Id.Value)
 	if err != nil {
 		return err
 	}
 
-	i, err := res.RowsAffected()
-	if i == 0 {
-		return errors.New("relationship not found")
-	} else if err != nil {
-		return err
-	}
-
-	defer statement.Close()
-
-	defer statement.Close()
 	return nil
 }
 
@@ -240,7 +232,7 @@ func (db *appdbimpl) UnbanUser(username string, byUsername structures.User) erro
 		return errors.New("user not found")
 	}
 
-	insertUserSQL := `DELETE FROM Banned WHERE User=? AND Banned=? RETURNING User;`
+	insertUserSQL := `DELETE FROM Banned WHERE User=? AND Banned=?;`
 	statement, err := db.c.Prepare(insertUserSQL)
 	if err != nil {
 		return err
@@ -492,13 +484,15 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	if err != nil {
 		return structures.Comments{}, errors.New("image not found")
 	}
-
 	err = db.c.QueryRow(`SELECT COUNT(*) 
 								FROM Comment c JOIN Photo p ON c.IdPhoto=p.Id
 								WHERE p.Id="` + strconv.FormatInt(photoId.Value, 10) + `" 
 										AND c.User NOT IN (SELECT b.Banned 
 																FROM Banned b 
-																WHERE b.User="` + user.Username.Value + `");`).Scan(&num)
+																WHERE b.User="` + user.Id.Value + `")
+										AND c.User NOT IN (SELECT b.User
+																FROM Banned b 
+																WHERE b.Banned="` + user.Id.Value + `");`).Scan(&num)
 	if err != nil {
 		return structures.Comments{}, err
 	}
@@ -509,6 +503,12 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	rows, err := db.c.Query(`SELECT u.Id, u.Username, c.Id, c.Data, c.Text
 								FROM Comment c JOIN Photo p ON c.IdPhoto=p.Id JOIN Users u ON c.User=u.Id
 								WHERE p.Id="` + strconv.FormatInt(photoId.Value, 10) + `" 
+										AND u.Id NOT IN (SELECT b.Banned 
+															FROM Banned b 
+															WHERE b.User="` + user.Id.Value + `")
+										AND u.Id NOT IN (SELECT b.User
+															FROM Banned b 
+															WHERE b.Banned="` + user.Id.Value + `") 
 								ORDER BY c.Data DESC
 								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
 	if err != nil {

@@ -7,23 +7,7 @@ import NavBar from './components/NavBar.vue'
 export default {
 	components: {
 		NavBar 
-	},
-	data: function() {
-		return {
-			isLogged: false,
-		}
-	},
-	methods: {
-
-	},
-	watch: {
-    '$route': {
-		handler () {
-			this.isLogged = this.$profile.isLogged;
-		},
-    }
-  }
-
+	}
 }
 </script>
 
@@ -34,10 +18,10 @@ export default {
 		</div>
 	</header>
 	<RouterView :key="this.$route.path"/>
-	<NavBar v-if="this.isLogged" />
+	<NavBar v-if="this.$profile.isLogged" />
 </template>
 
-<style>
+<style scoped>
 	.header {
 		justify-content: center;
 		align-items: center;

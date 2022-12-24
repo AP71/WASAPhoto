@@ -236,10 +236,10 @@ export default {
         </div>
         <ErrorMsg v-if="this.errormsgDialog" :msg="this.errormsgDialog"/>
         <div class="d-flex flex-row justify-content-evenly align-items-center pb-3 w-50">
-            <button type="button" class="btn btn-outline-success rounded-pill fs-5" :disabled="this.newUsername.length<3 || this.newUsername.length>16" style="width: 150px" @click="this.changeUsername">
+            <button type="button" class="btn btn-outline-success rounded-pill fs-5" :disabled="this.newUsername.length<3 || this.newUsername.length>16" style="width: 150px" @click="changeUsername">
                 Submit
             </button>
-            <button type="button" class="btn btn-outline-danger rounded-pill fs-6" style="width: 150px" @click="this.closeDialog">
+            <button type="button" class="btn btn-outline-danger rounded-pill fs-6" style="width: 150px" @click="closeDialog">
                 Cancel
             </button>
         </div>
@@ -253,10 +253,10 @@ export default {
         </div>
         <ErrorMsg v-if="this.errormsgDialog" :msg="this.errormsgDialog"/>
         <div class="d-flex flex-row justify-content-evenly align-items-center pb-3 w-50">
-            <button type="button" class="btn btn-outline-success rounded-pill fs-5" style="width: 150px" @click="this.upload">
+            <button type="button" class="btn btn-outline-success rounded-pill fs-5" style="width: 150px" @click="upload">
                 Upload
             </button>
-            <button type="button" class="btn btn-outline-danger rounded-pill fs-6" style="width: 150px" @click="this.closeDialog">
+            <button type="button" class="btn btn-outline-danger rounded-pill fs-6" style="width: 150px" @click="closeDialog">
                 Cancel
             </button>
         </div>
@@ -304,13 +304,13 @@ export default {
                     </button>
                 </div>
                 <div v-else class="d-flex flex-row justify-content-evenly align-items-center w-100">
-                    <button type="button" @click="this.showDialog(false)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 10px">
+                    <button type="button" @click="showDialog(false)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 10px">
                         Change username
                     </button>
-                    <button type="button" @click="this.showDialog(true)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 100px">
+                    <button type="button" @click="showDialog(true)" class="btn btn-outline-success rounded-pill fs-4 w-25" style="width: 100px">
                         Upload photo
                     </button>
-                    <button type="button" @click="this.logout" class="btn btn-outline-danger rounded-pill fs-4 w-25" style="width: 100px">
+                    <button type="button" @click="logout" class="btn btn-outline-danger rounded-pill fs-4 w-25" style="width: 100px">
                         Logout
                     </button>                            
                 </div>
@@ -325,7 +325,7 @@ export default {
 				</div>
 			</div>
 			<div v-else class="p-4">
-				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="this.getUserData">...</button>
+				<button type="button" class="btn btn-outline-success text-white fw-bolder rounded-pill fs-4" style="width: 150px" @click="getUserData">...</button>
 			</div>
             <div style="height: 75px;"/>
 		</div>
