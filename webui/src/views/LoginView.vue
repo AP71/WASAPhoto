@@ -1,9 +1,6 @@
-<script setup>
+<script>
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import ErrorMsg from '../components/ErrorMsg.vue'
-</script>
-
-<script>
 
 export default {
 	components: {
@@ -32,9 +29,9 @@ export default {
 			if (this.identifier != "") {
 				this.$profile.setProfile(this.identifier, this.username);
 				this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.identifier}`;
-				this.loading = false;
 				this.$router.push({path: '/home'});
 			}
+			this.loading = false;
 		},
 	}
 }

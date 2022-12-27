@@ -1,10 +1,8 @@
-<script setup>
+<script>
 import Photo from '../components/Photo.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import ErrorMsg from '../components/ErrorMsg.vue'
-</script>
 
-<script>
 export default {
 	components: {
 		Photo,

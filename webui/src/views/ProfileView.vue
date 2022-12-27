@@ -1,16 +1,14 @@
-<script setup>
+<script>
 import Photo from '../components/Photo.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import ErrorMsg from '../components/ErrorMsg.vue'
-import { compile } from 'vue';
-</script>
 
-<script>
 export default {
     emits: ['photoDelated'],
     components: {
         LoadingSpinner,
         ErrorMsg,
+        Photo,
     },
     data: function () {
         return {
