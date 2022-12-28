@@ -31,7 +31,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	if user.Id.Value == "" || err != nil {
 		user.Id.Value, err = rt.db.CreateUser(user.Username.Value)
 		if err != nil {
-			errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
+			errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Internal server error")
 			return
 		}
 	}

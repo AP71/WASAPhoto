@@ -1,16 +1,7 @@
-<script setup>
-import LoadingSpinner from '../components/LoadingSpinner.vue'
-import ErrorMsg from '../components/ErrorMsg.vue'
-</script>
-
 <script>
 export default {
 	props: ['post'],
 	emits: ['photoDelated'],
-	components: {
-		LoadingSpinner,
-		ErrorMsg,
-	},
     data: function() {
 		return {
 			postDetails: Object.assign({}, this.post),

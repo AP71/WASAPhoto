@@ -1,14 +1,5 @@
 <script>
-import Photo from '../components/Photo.vue'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
-import ErrorMsg from '../components/ErrorMsg.vue'
-
 export default {
-	components: {
-		Photo,
-		LoadingSpinner,
-		ErrorMsg,
-	},
 	data: function() {
 		return {
 			errormsg: null,
