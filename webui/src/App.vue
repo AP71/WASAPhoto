@@ -12,7 +12,7 @@ export default {
 		</div>
 	</header>
 	<RouterView :key="this.$route.path"/>
-	<NavBar v-if="this.$profile.isLogged" />
+	<NavBar v-if="this.$profile.isLogged"/>
 </template>
 
 <style scoped>

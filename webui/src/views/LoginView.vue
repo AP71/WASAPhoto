@@ -43,15 +43,15 @@ export default {
 			<div class="fs-2 fw-bolder text-white pt-5">
 				Login
 			</div>
-			<div class="pt-5">
+			<div class="pt-5 pb-1">
 				<input class="border border-3 border-success rounded-pill min-vh-25 min-vw-25 fs-4 text-indent" v-model="username" placeholder="Username"/>
 			</div>
+			<ErrorMsg v-if="this.errormsg" :msg="this.errormsg"/>
+			<LoadingSpinner v-if="this.loading"/>
 			<div v-if="!loading" class="pt-5 pb-5">
 				<button type="button" class="btn btn-outline-success rounded-pill fs-4" :disabled="username.length<3 || username.length>16" style="width: 150px" @click="doLogin">Login</button>
 			</div>			
 		</div>
-		<ErrorMsg v-if="this.errormsg" :msg="this.errormsg"/>
-		<LoadingSpinner v-if="this.loading"/>
 	</div>	
 </template>
 
