@@ -56,7 +56,7 @@ export default {
                 <input v-model="this.userToSearch" class="inputBar border border-1 border-success fs-4" style="background-color: #383838;" placeholder="Username"/>
                 <LoadingSpinner :loading="this.loading"/>
                 <div class="px-3">
-                    <button type="button" @click="getUsers" class="btn btn-outline-success rounded-pill fs-5">
+                    <button type="button" @click="getUsers" class="btn btn-outline-success rounded-pill fs-5" :disabled="!this.userToSearch">
                         Search
                     </button>  
                 </div>
