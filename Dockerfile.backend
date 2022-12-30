@@ -16,7 +16,10 @@ EXPOSE 3000 4000
 
 ### Copy the build executable from the builder image
 WORKDIR /app/
+VOLUME /app/service/database/file/
 COPY --from=builder /app/webapi ./
+COPY ./service/database/file /app/service/database/file
 
 ### Executable command
 CMD ["/app/webapi"]
+
