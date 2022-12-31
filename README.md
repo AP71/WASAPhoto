@@ -25,7 +25,7 @@ $ docker run -it --rm -v /service/database/file:/app/service/database/file:rw -p
 ### Frontend
 
 ```
-$ docker run -it --rm -p 8081:80 wasa-photos-frontend:latest
+$ docker run -it --rm -p 8080:80 wasa-photos-frontend:latest
 ```
 
 ## License
