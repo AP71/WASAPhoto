@@ -1,7 +1,7 @@
 <script>
 export default {
 	props: ['post'],
-	emits: ['photoDelated'],
+	emits: ['photoDeleted'],
     data: function() {
 		return {
 			postDetails: Object.assign({}, this.post),
@@ -125,7 +125,7 @@ export default {
 			this.errormsg = null;
 			try{
 				let response = await this.$axios.delete(`/profiles/${this.$profile.username}/photos/${this.post.photo}`);
-				this.$emit('photoDelated', this.post.photo);
+				this.$emit('photoDeleted', this.post.photo);
 			} catch(e) {
 				this.errormsg = e.toString();
 			}
