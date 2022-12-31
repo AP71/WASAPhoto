@@ -4,7 +4,7 @@ import LoadingSpinner from '../components/LoadingSpinner.vue'
 import ErrorMsg from '../components/ErrorMsg.vue'
 
 export default {
-    emits: ['photoDelated'],
+    emits: ['photoDeleted'],
     components: {
         LoadingSpinner,
         ErrorMsg,
@@ -315,7 +315,7 @@ export default {
                 <LoadingSpinner v-if="loading"/>
             </div>
             <div class="d-flex flex-column justify-content-center align-items-center w-100 pt-5">
-                <Photo v-for="photo in this.photos" v-bind:key="photo.photo" v-bind:post="photo" v-on:photoDelated="eventHandler"/>
+                <Photo v-for="photo in this.photos" v-bind:key="photo.photo" v-bind:post="photo" v-on:photoDeleted="eventHandler"/>
             </div>
             <div v-if="this.nextPhotosPageId==0" class="d-flex flex-row justify-content-center align-items-center p-4">
 				<div class="rounded rounded-5 fs-5 text-success py-2 px-5" style="background-color: #212121;">
