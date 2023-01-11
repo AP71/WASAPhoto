@@ -17,7 +17,6 @@ EXPOSE 3000 4000
 WORKDIR /app/
 VOLUME /app/service/database/file/
 COPY --from=builder /app/webapi ./
-COPY ./service/database/file /app/service/database/file
 
 ### Executable command
 CMD ["/app/webapi"]
