@@ -32,7 +32,7 @@ func (rt *_router) getUsers(w http.ResponseWriter, r *http.Request, ps httproute
 
 	users, err = rt.db.GetUsers(userToSearch, pageId, user.Username.Value)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Internal server error")
 		return
 	}
 

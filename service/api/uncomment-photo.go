@@ -49,7 +49,7 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 		errors.WriteResponse(rt.baseLogger, w, "Comment not foun", http.StatusNotFound, "Comment not found")
 		return
 	} else if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Internal server error")
 		return
 	}
 

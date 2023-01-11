@@ -45,7 +45,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		errors.WriteResponse(rt.baseLogger, w, "Conflict error", http.StatusConflict, "You already placed a like on this photo")
 		return
 	} else if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Internal server error")
 		return
 	}
 

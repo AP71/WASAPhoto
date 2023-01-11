@@ -75,6 +75,67 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
+	// Check if table exists. If not, the database is empty, and we need to create the structure
+	var tableName string
+	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='Users';`).Scan(&tableName)
+	if errors.Is(err, sql.ErrNoRows) {
+		sqlStmt := `CREATE TABLE "Users" (
+						"Id"	TEXT NOT NULL,
+						"Username"	TEXT NOT NULL UNIQUE,
+						PRIMARY KEY("Id")
+					);
+					
+					CREATE TABLE "Follows" (
+						"Follow"	TEXT NOT NULL,
+						"Followed"	TEXT NOT NULL,
+						"Data"	TEXT NOT NULL DEFAULT current_timestamp,
+						PRIMARY KEY("Follow","Followed"),
+						FOREIGN KEY("Follow") REFERENCES "Users"("Id") ON DELETE CASCADE,
+						FOREIGN KEY("Followed") REFERENCES "Users"("Id") ON DELETE CASCADE
+					);
+					
+					CREATE TABLE "Banned" (
+						"User"	TEXT NOT NULL,
+						"Banned"	TEXT NOT NULL,
+						FOREIGN KEY("Banned") REFERENCES "Users"("Id") ON DELETE CASCADE,
+						FOREIGN KEY("User") REFERENCES "Users"("Id") ON DELETE CASCADE,
+						PRIMARY KEY("User","Banned")
+					);
+					
+					CREATE TABLE "Photo" (
+						"Id"	INTEGER NOT NULL,
+						"File"	BLOB NOT NULL,
+						"User"	TEXT NOT NULL,
+						"Data"	TEXT NOT NULL DEFAULT current_timestamp,
+						PRIMARY KEY("Id" AUTOINCREMENT),
+						FOREIGN KEY("User") REFERENCES "Users"("Id") ON DELETE CASCADE
+					);
+					
+					CREATE TABLE "Likes" (
+						"IdPhoto"	INTEGER NOT NULL,
+						"User"	TEXT NOT NULL,
+						"Data"	TEXT NOT NULL DEFAULT current_timestamp,
+						FOREIGN KEY("User") REFERENCES "Users"("Id") ON DELETE CASCADE,
+						PRIMARY KEY("IdPhoto","User"),
+						FOREIGN KEY("IdPhoto") REFERENCES "Photo"("Id") ON DELETE CASCADE
+					);
+					
+					CREATE TABLE "Comment" (
+						"Id"	INTEGER NOT NULL,
+						"IdPhoto"	INTEGER NOT NULL,
+						"User"	TEXT NOT NULL,
+						"Data"	TEXT NOT NULL DEFAULT current_timestamp,
+						"Text"	TEXT NOT NULL,
+						FOREIGN KEY("User") REFERENCES "Users"("Id") ON DELETE CASCADE,
+						FOREIGN KEY("IdPhoto") REFERENCES "Photo"("Id") ON DELETE CASCADE,
+						PRIMARY KEY("Id" AUTOINCREMENT)
+					);`
+		_, err = db.Exec(sqlStmt)
+		if err != nil {
+			return nil, errors.New("error creating database structure: " + err.Error())
+		}
+	}
+
 	return &appdbimpl{c: db}, nil
 }
 

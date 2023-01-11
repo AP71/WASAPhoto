@@ -34,7 +34,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		errors.WriteResponse(rt.baseLogger, w, "User not found", http.StatusNotFound, "User not found")
 		return
 	} else if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Database error")
+		errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Database error")
 		return
 	}
 

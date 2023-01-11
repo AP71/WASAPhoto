@@ -27,7 +27,7 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 		errors.WriteResponse(rt.baseLogger, w, "Conflict error", http.StatusConflict, "You have not banned this user")
 		return
 	} else if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Database error")
+		errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Database error")
 		return
 	}
 

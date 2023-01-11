@@ -38,7 +38,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		errors.WriteResponse(rt.baseLogger, w, "Conflict error", http.StatusConflict, "Username already in use from another user")
 		return
 	} else if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Database error", http.StatusInternalServerError, "Internal server error")
+		errors.WriteResponse(rt.baseLogger, w, "Database error: "+err.Error(), http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
