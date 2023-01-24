@@ -82,6 +82,12 @@ export default {
 			try{
 				let response = await this.$axios.delete(`/feed/${this.post.photo}/comments/${this.$profile.username}?idCommento=${commentId}`);
 				this.postDetails.numberOfComments -= 1;
+				for (var i=0; i<this.comments.length; i++){
+					if (this.comments[i].id === commentId){
+						this.comments.splice(i,1)
+						break;
+					}
+				}
 			} catch(e) {
 				this.errormsg = e.toString();
 			}

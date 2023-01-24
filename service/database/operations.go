@@ -74,22 +74,29 @@ func (db *appdbimpl) DeleteFile(file structures.PhotoID) error {
 	return nil
 }
 
-func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, except string) (structures.Users, error) {
+func (db *appdbimpl) GetUsers(userToSearch string, pageId int64, user structures.User) (structures.Users, error) {
 	var usersList structures.Users
 	var num int64
+	var banned int64
 
 	err := db.c.QueryRow(`SELECT COUNT(Id) 
 							FROM Users 
-							WHERE Username != "` + except + `" AND Username LIKE '%` + userToSearch + `%';`).Scan(&num)
+							WHERE Username != ? AND Username LIKE '%`+userToSearch+`%';`, user.Username.Value).Scan(&num)
+	if err != nil {
+		return structures.Users{}, err
+	}
+
+	err = db.c.QueryRow(`SELECT COUNT(b.User) 
+							FROM Banned AS b JOIN Users AS u ON b.User=u.Id
+							WHERE u.Username LIKE '%`+userToSearch+`%' AND b.Banned = ?;`, user.Id.Value).Scan(&banned)
 	if err != nil {
 		return structures.Users{}, err
 	}
 
 	rows, err := db.c.Query(`SELECT Id, Username 
 								FROM Users 
-								WHERE Username != "` + except + `" AND Username LIKE '%` + userToSearch + `%' 
-								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
-
+								WHERE Username!=? AND Username LIKE '%`+userToSearch+`%' AND Id NOT IN (SELECT User FROM Banned WHERE Banned = ?)
+								LIMIT 10 OFFSET ?;`, user.Username.Value, user.Id.Value, strconv.FormatInt((pageId*10), 10))
 	if err != nil {
 		return structures.Users{}, err
 	}

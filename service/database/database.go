@@ -44,7 +44,7 @@ type AppDatabase interface {
 	UpdateUsername(user structures.User, new structures.NewUsername) (string, error)
 	UploadFile(file structures.Image, user structures.User) error
 	DeleteFile(file structures.PhotoID) error
-	GetUsers(userToSearch string, pageId int64, except string) (structures.Users, error)
+	GetUsers(userToSearch string, pageId int64, user structures.User) (structures.Users, error)
 	GetUserPage(username string, pageId int64) (structures.UserPage, error)
 	BanUser(username string, byUsername structures.User) error
 	UnbanUser(username string, byUsername structures.User) error
