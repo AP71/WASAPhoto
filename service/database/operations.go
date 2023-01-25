@@ -10,7 +10,7 @@ import (
 
 func (db *appdbimpl) GetUserId(username string) (string, error) {
 	var id uuid.UUID
-	err := db.c.QueryRow(`SELECT Id FROM Users WHERE Username="` + username + `";`).Scan(&id)
+	err := db.c.QueryRow(`SELECT Id FROM Users WHERE Username=?;`, username).Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -133,30 +133,30 @@ func (db *appdbimpl) GetUserPage(username string, pageId int64) (structures.User
 
 	err := db.c.QueryRow(`SELECT u.Id, u.Username, COUNT(p.Id) 
 									FROM Users AS u LEFT JOIN Photo AS p ON u.Id=p.User
-									WHERE Username="`+username+`";`).Scan(&user.Id, &user.Username, &user.PhotoCounter)
+									WHERE Username=?;`, username).Scan(&user.Id, &user.Username, &user.PhotoCounter)
 	if err != nil {
 		return structures.UserPage{}, err
 	}
 
 	err = db.c.QueryRow(`SELECT COUNT(*) 
 								FROM Users AS u JOIN Follows AS f ON u.Id=f.Followed
-								WHERE u.Id="` + user.Id + `";`).Scan(&user.Followers)
+								WHERE u.Id=?;`, user.Id).Scan(&user.Followers)
 	if err != nil {
 		return structures.UserPage{}, err
 	}
 
 	err = db.c.QueryRow(`SELECT COUNT(*) 
 								FROM Users AS u JOIN Follows AS f ON u.Id=f.Follow
-								WHERE u.Id="` + user.Id + `";`).Scan(&user.Following)
+								WHERE u.Id=?;`, user.Id).Scan(&user.Following)
 	if err != nil {
 		return structures.UserPage{}, err
 	}
 
 	rows, err := db.c.Query(`SELECT p.Id, p.Data
 								FROM Users AS u LEFT JOIN Photo AS p ON u.Id=p.User
-								WHERE u.Id="` + user.Id + `"
+								WHERE u.Id=?
 								ORDER BY p.Data DESC
-								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+								LIMIT 10 OFFSET ?;`, user.Id, strconv.FormatInt((pageId*10), 10))
 	if err != nil {
 		return structures.UserPage{}, err
 	}
@@ -316,10 +316,10 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 	err := db.c.QueryRow(`SELECT COUNT(*) 
 								FROM Users u JOIN Follows f ON u.Id=f.Follow
 											JOIN Photo p ON p.User=f.Followed
-								WHERE 	u.Id="` + user.Id.Value + `" 
+								WHERE 	u.Id=?
 										AND p.User NOT IN (SELECT b.Banned 
 																FROM Banned b 
-																WHERE b.User=f.Follow);`).Scan(&num)
+																WHERE b.User=f.Follow);`, user.Id.Value).Scan(&num)
 	if err != nil {
 		return structures.Photos{}, err
 	}
@@ -330,9 +330,9 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 	rows, err := db.c.Query(`SELECT p.Id, u.Username, p.User, p.Data
 								FROM Follows f JOIN Photo p ON p.User=f.Followed
 											 JOIN Users u ON p.User=u.Id
-								WHERE f.Follow="` + user.Id.Value + `" AND p.User NOT IN (SELECT b.Banned FROM Banned b WHERE b.User=f.Follow)
+								WHERE f.Follow=? AND p.User NOT IN (SELECT b.Banned FROM Banned b WHERE b.User=f.Follow)
 								ORDER BY p.Data DESC
-								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+								LIMIT 10 OFFSET ?;`, user.Id.Value, strconv.FormatInt((pageId*10), 10))
 
 	if err != nil {
 		return structures.Photos{}, err
@@ -369,11 +369,11 @@ func (db *appdbimpl) GetFeed(user structures.User, pageId int64) (structures.Pho
 }
 
 func (db *appdbimpl) getNumberOfLikesAndNumberOfComments(image *structures.Photo) error {
-	err := db.c.QueryRow(`SELECT COUNT(IdPhoto) FROM Likes WHERE IdPhoto=` + strconv.Itoa(int(image.Id)) + `;`).Scan(&image.NumLikes)
+	err := db.c.QueryRow(`SELECT COUNT(IdPhoto) FROM Likes WHERE IdPhoto=?;`, strconv.Itoa(int(image.Id))).Scan(&image.NumLikes)
 	if err != nil {
 		return err
 	}
-	err = db.c.QueryRow(`SELECT COUNT(IdPhoto) FROM Comment WHERE IdPhoto=` + strconv.Itoa(int(image.Id)) + `;`).Scan(&image.NumComments)
+	err = db.c.QueryRow(`SELECT COUNT(IdPhoto) FROM Comment WHERE IdPhoto=?;`, strconv.Itoa(int(image.Id))).Scan(&image.NumComments)
 	if err != nil {
 		return err
 	}
@@ -381,7 +381,7 @@ func (db *appdbimpl) getNumberOfLikesAndNumberOfComments(image *structures.Photo
 }
 
 func (db *appdbimpl) GetPhoto(photoId int64, image *structures.Image) error {
-	err := db.c.QueryRow(`SELECT File FROM Photo WHERE Id=` + strconv.Itoa(int(photoId)) + `;`).Scan(&image.Value)
+	err := db.c.QueryRow(`SELECT File FROM Photo WHERE Id=?;`, strconv.Itoa(int(photoId))).Scan(&image.Value)
 	if err != nil {
 		return err
 	}
@@ -390,7 +390,7 @@ func (db *appdbimpl) GetPhoto(photoId int64, image *structures.Image) error {
 
 func (db *appdbimpl) SetLike(photoId structures.PhotoID, user structures.User) error {
 
-	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=?;`, strconv.Itoa(int(photoId.Value))).Scan(&photoId.Value)
 	if err != nil {
 		return errors.New("image not found")
 	}
@@ -411,7 +411,7 @@ func (db *appdbimpl) SetLike(photoId structures.PhotoID, user structures.User) e
 
 func (db *appdbimpl) RemoveLike(photoId structures.PhotoID, user structures.User) error {
 
-	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=?;`, strconv.Itoa(int(photoId.Value))).Scan(&photoId.Value)
 	if err != nil {
 		return errors.New("image not found")
 	}
@@ -440,7 +440,7 @@ func (db *appdbimpl) RemoveLike(photoId structures.PhotoID, user structures.User
 
 func (db *appdbimpl) WriteComment(photoId structures.PhotoID, user structures.User, comment structures.Comment) error {
 
-	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=?;`, strconv.Itoa(int(photoId.Value))).Scan(&photoId.Value)
 	if err != nil {
 		return errors.New("image not found")
 	}
@@ -487,19 +487,19 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 	var comments structures.Comments
 	var num int64
 
-	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=` + strconv.Itoa(int(photoId.Value)) + `;`).Scan(&photoId.Value)
+	err := db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=?;`, strconv.Itoa(int(photoId.Value))).Scan(&photoId.Value)
 	if err != nil {
 		return structures.Comments{}, errors.New("image not found")
 	}
 	err = db.c.QueryRow(`SELECT COUNT(*) 
 								FROM Comment c JOIN Photo p ON c.IdPhoto=p.Id
-								WHERE p.Id="` + strconv.FormatInt(photoId.Value, 10) + `" 
+								WHERE p.Id=?
 										AND c.User NOT IN (SELECT b.Banned 
 																FROM Banned b 
-																WHERE b.User="` + user.Id.Value + `")
+																WHERE b.User=?)
 										AND c.User NOT IN (SELECT b.User
 																FROM Banned b 
-																WHERE b.Banned="` + user.Id.Value + `");`).Scan(&num)
+																WHERE b.Banned=?);`, strconv.FormatInt(photoId.Value, 10), user.Id.Value, user.Id.Value).Scan(&num)
 	if err != nil {
 		return structures.Comments{}, err
 	}
@@ -509,15 +509,15 @@ func (db *appdbimpl) GetComments(photoId structures.PhotoID, pageId int64, user 
 
 	rows, err := db.c.Query(`SELECT u.Id, u.Username, c.Id, c.Data, c.Text
 								FROM Comment c JOIN Photo p ON c.IdPhoto=p.Id JOIN Users u ON c.User=u.Id
-								WHERE p.Id="` + strconv.FormatInt(photoId.Value, 10) + `" 
+								WHERE p.Id=?
 										AND u.Id NOT IN (SELECT b.Banned 
 															FROM Banned b 
-															WHERE b.User="` + user.Id.Value + `")
+															WHERE b.User=?)
 										AND u.Id NOT IN (SELECT b.User
 															FROM Banned b 
-															WHERE b.Banned="` + user.Id.Value + `") 
+															WHERE b.Banned=?) 
 								ORDER BY c.Data DESC
-								LIMIT 10 OFFSET ` + strconv.FormatInt((pageId*10), 10) + `;`)
+								LIMIT 10 OFFSET ?;`, strconv.FormatInt(photoId.Value, 10), user.Id.Value, user.Id.Value, strconv.FormatInt((pageId*10), 10))
 	if err != nil {
 		return structures.Comments{}, err
 	}
@@ -556,7 +556,7 @@ func (db *appdbimpl) GetBanStatus(username structures.User, byUsername structure
 		return errors.New("user not found")
 	}
 
-	err = db.c.QueryRow(`SELECT * FROM Banned WHERE User="`+byUsername.Id.Value+`" AND Banned="`+username.Id.Value+`";`).Scan(&byUsername.Id.Value, &username.Id.Value)
+	err = db.c.QueryRow(`SELECT * FROM Banned WHERE User=? AND Banned=?;`, byUsername.Id.Value, username.Id.Value).Scan(&byUsername.Id.Value, &username.Id.Value)
 	if err != nil {
 		return err
 	}
@@ -572,7 +572,7 @@ func (db *appdbimpl) GetFollowStatus(username structures.User, byUsername struct
 		return errors.New("user not found")
 	}
 
-	err = db.c.QueryRow(`SELECT Follow, Followed FROM Follows WHERE Follow="`+byUsername.Id.Value+`" AND Followed="`+username.Id.Value+`";`).Scan(&byUsername.Id.Value, &username.Id.Value)
+	err = db.c.QueryRow(`SELECT Follow, Followed FROM Follows WHERE Follow=? AND Followed=?;`, byUsername.Id.Value, username.Id.Value).Scan(&byUsername.Id.Value, &username.Id.Value)
 	if err != nil {
 		return err
 	}
@@ -580,7 +580,7 @@ func (db *appdbimpl) GetFollowStatus(username structures.User, byUsername struct
 }
 
 func (db *appdbimpl) GetLikeStatus(username structures.User, photoId structures.PhotoID) error {
-	err := db.c.QueryRow(`SELECT IdPhoto, User FROM Likes WHERE User="`+username.Id.Value+`" AND IdPhoto="`+strconv.Itoa(int(photoId.Value))+`";`).Scan(&photoId.Value, &username.Id.Value)
+	err := db.c.QueryRow(`SELECT IdPhoto, User FROM Likes WHERE User=? AND IdPhoto=?;`, username.Id.Value, strconv.Itoa(int(photoId.Value))).Scan(&photoId.Value, &username.Id.Value)
 	if err != nil {
 		return err
 	}
