@@ -187,6 +187,7 @@ paths:
         '204':
           description: |
             byUsername has banned username.
+        '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'} 
     put:
       tags: ["Interactions with other users"]
@@ -240,6 +241,7 @@ paths:
         '204':
           description: |
             byUsername follow username.
+        '401':  {$ref: '#/components/responses/unauthAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'}  
     put:
       tags: ["Interactions with other users"]
@@ -342,6 +344,7 @@ paths:
           description: |
             byUsername liked photo.
         '400':  {$ref: '#/components/responses/badRequest'}
+        '401':  {$ref: '#/components/responses/unauthAccess'}
         '403':  {$ref: '#/components/responses/forbiddenAccess'}
         '404':  {$ref: '#/components/responses/notFoundError'} 
     put:
