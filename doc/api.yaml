@@ -184,11 +184,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
-          description: |
-            byUsername has banned username.
+        '200':  {$ref: '#/components/responses/status'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
-        '404':  {$ref: '#/components/responses/notFoundError'} 
     put:
       tags: ["Interactions with other users"]
       summary: Ban another user
@@ -238,11 +235,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
-          description: |
-            byUsername follow username.
+        '200':  {$ref: '#/components/responses/status'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
-        '404':  {$ref: '#/components/responses/notFoundError'}  
     put:
       tags: ["Interactions with other users"]
       summary: Follow a user
@@ -340,13 +334,10 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
-          description: |
-            byUsername liked photo.
+        '200':  {$ref: '#/components/responses/status'}
         '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '403':  {$ref: '#/components/responses/forbiddenAccess'}
-        '404':  {$ref: '#/components/responses/notFoundError'} 
     put:
       tags: ["Feed operations"]
       summary: Place a like
@@ -768,7 +759,22 @@ components:
           minLength: 0
           maxLength: 50
           description: Represents the text of the error.
+    statusMessage:
+      title: Interaction status
+      description: Represents the status of the interaction.
+      type: object
+      properties:
+        status: 
+          type: boolean
+          example: true
+          description: Represents the status of the interaction.
   responses:
+    status:
+      description: Return the status of the interaction.
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/statusMessage'
     badRequest:
       description: Bad request. 
       content:
