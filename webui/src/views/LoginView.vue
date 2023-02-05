@@ -23,7 +23,7 @@ export default {
 				let response = await this.$axios.post("/session", {username: this.username,});
 				this.identifier = response.data.identifier;
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 
 			if (this.identifier != "") {

@@ -41,6 +41,10 @@ type Users struct {
 	NextUsersPageId int64      `json:"nextUsersPageId"`
 }
 
+type Status struct {
+	Status bool `json:"status"`
+}
+
 func CheckUsername(s string) bool {
 	l := len(s)
 	res, _ := regexp.MatchString("^[a-zA-Z0-9_.]*$", s)

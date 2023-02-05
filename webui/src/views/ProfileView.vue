@@ -57,7 +57,7 @@ export default {
                     this.photos[this.index].username = this.username;
                 }
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
         },
@@ -69,20 +69,16 @@ export default {
                 // status
                 try{
                     let response = await this.$axios.get(`/profiles/${this.username}/followed/${this.$profile.username}`);
-                    this.followed = true;
+                    this.followed = response.data.status;
                 } catch(e) {
-                    if (e.response.status === 404) {
-                        this.followed = false;
-                    }
+                    this.errormsg = e.response.data.message;
                 }
 
                 try{
                     let response = await this.$axios.get(`/profiles/${this.username}/banned/${this.$profile.username}`);
-                    this.banned = true;
+                    this.banned = response.data.status;
                 } catch(e) {
-                    if (e.response.status === 404) {
-                        this.banned = false;
-                    }
+                    this.errormsg = e.response.data.message;
                 }
                 
                 if (!this.banned ) {
@@ -101,8 +97,8 @@ export default {
 				this.followed = true;
 				this.followers += 1;
 			} catch(e) {
-				this.errormsg = e.toString();
 				if (e.response.status == 409) {
+                    this.errormsg = e.response.data.message;
 					this.followed = true;
 				}
 			}
@@ -116,7 +112,10 @@ export default {
 				this.followed = false;
 				this.followers -= 1;
 			} catch(e) {
-				this.errormsg = e.toString();
+				if (e.response.status == 409) {
+                    this.errormsg = e.response.data.message;
+					this.followed = false;
+				}
 			}
 			this.loading = false;
         },
@@ -129,8 +128,8 @@ export default {
                 this.followed = false;
                 this.reset();
 			} catch(e) {
-				this.errormsg = e.toString();
 				if (e.response.status == 409) {
+                    this.errormsg = e.response.data.message;
 					this.banned = true;
                     this.followed = false;
 				}
@@ -145,7 +144,7 @@ export default {
 				this.banned = false;
                 this.getUserData();
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
         },

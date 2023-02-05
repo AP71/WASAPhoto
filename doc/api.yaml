@@ -186,6 +186,7 @@ paths:
       responses:
         '200':  {$ref: '#/components/responses/status'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     put:
       tags: ["Interactions with other users"]
       summary: Ban another user
@@ -237,6 +238,7 @@ paths:
       responses:
         '200':  {$ref: '#/components/responses/status'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     put:
       tags: ["Interactions with other users"]
       summary: Follow a user
@@ -338,6 +340,7 @@ paths:
         '400':  {$ref: '#/components/responses/badRequest'}
         '401':  {$ref: '#/components/responses/unauthAccess'}
         '403':  {$ref: '#/components/responses/forbiddenAccess'}
+        '5XX':  {$ref: '#/components/responses/serverError'}
     put:
       tags: ["Feed operations"]
       summary: Place a like

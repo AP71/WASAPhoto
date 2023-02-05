@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
@@ -12,7 +13,7 @@ func (rt *_router) banStatus(w http.ResponseWriter, r *http.Request, ps httprout
 	w.Header().Set("content-type", "application/json")
 
 	var username structures.User
-
+	var status structures.Status
 	username.Username.Value = ps.ByName("username")
 
 	if ps.ByName("byUsername") != user.Username.Value {
@@ -21,11 +22,16 @@ func (rt *_router) banStatus(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	err := rt.db.GetBanStatus(username, user)
+	w.WriteHeader(http.StatusOK)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (ban)", http.StatusNotFound, "Interaction not found.")
-		return
+		status.Status = false
 	} else {
-		w.WriteHeader(http.StatusNoContent)
+		status.Status = true
+	}
+	err = json.NewEncoder(w).Encode(status)
+	if err != nil {
+		errors.WriteResponse(rt.baseLogger, w, "banStatus return an error.", http.StatusInternalServerError, "Internal server error")
+		return
 	}
 
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"wasa-photo/service/api/errors"
@@ -13,6 +14,7 @@ func (rt *_router) likeStatus(w http.ResponseWriter, r *http.Request, ps httprou
 	w.Header().Set("content-type", "application/json")
 
 	var photoId structures.PhotoID
+	var status structures.Status
 
 	id, err := strconv.ParseInt(ps.ByName("photoId"), 10, 64)
 	if err != nil {
@@ -27,11 +29,16 @@ func (rt *_router) likeStatus(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	err = rt.db.GetLikeStatus(user, photoId)
+	w.WriteHeader(http.StatusOK)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (like)", http.StatusNotFound, "Interaction not found.")
-		return
+		status.Status = false
 	} else {
-		w.WriteHeader(http.StatusNoContent)
+		status.Status = true
+	}
+	err = json.NewEncoder(w).Encode(status)
+	if err != nil {
+		errors.WriteResponse(rt.baseLogger, w, "likeStatus return an error.", http.StatusInternalServerError, "Internal server error")
+		return
 	}
 
 }

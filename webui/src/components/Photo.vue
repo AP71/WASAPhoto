@@ -26,7 +26,7 @@ export default {
 				this.blobUrl = URL.createObjectURL(this.blob);
 				document.getElementById(`${this.post.photo}`).src = this.blobUrl;
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
   		},
@@ -36,13 +36,9 @@ export default {
 			// status
 			try{
 				let response = await this.$axios.get(`/feed/${this.post.photo}/likes/${this.$profile.username}`);
-				this.liked = true;
+				this.liked = response.data.status;
 			} catch(e) {
-				if (e.response.status == 404) {
-					this.liked = false;
-				} else {
-					this.errormsg = e.toString();
-				}
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
   		},
@@ -54,10 +50,11 @@ export default {
 				this.liked = true;
 				this.postDetails.numberOfLikes += 1;
 			} catch(e) {
-				this.errormsg = e.toString();
 				if (e.response.status == 409) {
+					this.errormsg = e.response.data.message;
 					this.liked = true;
 				}
+				
 			}
 			this.loading = false;
   		},
@@ -69,7 +66,10 @@ export default {
 				this.liked = false;
 				this.postDetails.numberOfLikes -= 1;
 			} catch(e) {
-				this.errormsg = e.toString();
+				if (e.response.status == 409) {
+					this.errormsg = e.response.data.message;
+					this.liked = false;
+				}
 			}
 			this.loading = false;
   		},
@@ -89,7 +89,7 @@ export default {
 					}
 				}
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.getComments();
         },
@@ -102,7 +102,7 @@ export default {
 					this.postDetails.numberOfComments += 1;
 					this.newComment = null
 				} catch(e) {
-					this.errormsg = e.toString();
+					this.errormsg = e.response.data.message;
 				}
 				this.getComments();
 			}
@@ -119,7 +119,7 @@ export default {
 					this.nextCommentPageId = response.data.nextCommentPageId;
 				}
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
 		},
@@ -133,7 +133,7 @@ export default {
 				let response = await this.$axios.delete(`/profiles/${this.$profile.username}/photos/${this.post.photo}`);
 				this.$emit('photoDeleted', this.post.photo);
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
 		}
@@ -147,7 +147,7 @@ export default {
 </script>
 
 <template>
-	<LoadingSpinner :loading="this.loading"/>
+	<LoadingSpinner :loading="this.loading" class="pb-2"/>
 	<ErrorMsg :msg="this.errormsg"/>
 	<div class="card" style="background-color: #212121;">
         <div class="PhotoHeader">

@@ -20,7 +20,7 @@ export default {
 					this.nextPageId = response.data.nextFeedPageId;
 				}
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
 			this.loading = false;
   		},

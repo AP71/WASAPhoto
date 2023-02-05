@@ -29,7 +29,7 @@ export default {
 				this.nextPageId = response.data.nextUsersPageId;
                 this.userToSearch = null;
 			} catch(e) {
-				this.errormsg = e.toString();
+				this.errormsg = e.response.data.message;
 			}
             
 			this.loading = false;

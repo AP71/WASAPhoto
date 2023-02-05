@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"wasa-photo/service/api/errors"
 	"wasa-photo/service/api/structures"
@@ -12,6 +13,7 @@ func (rt *_router) followStatus(w http.ResponseWriter, r *http.Request, ps httpr
 	w.Header().Set("content-type", "application/json")
 
 	var username structures.User
+	var status structures.Status
 
 	username.Username.Value = ps.ByName("username")
 
@@ -21,11 +23,16 @@ func (rt *_router) followStatus(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	err := rt.db.GetFollowStatus(username, user)
+	w.WriteHeader(http.StatusOK)
 	if err != nil {
-		errors.WriteResponse(rt.baseLogger, w, "Interaction not found (follow)", http.StatusNotFound, "Interaction not found.")
-		return
+		status.Status = false
 	} else {
-		w.WriteHeader(http.StatusNoContent)
+		status.Status = true
+	}
+	err = json.NewEncoder(w).Encode(status)
+	if err != nil {
+		errors.WriteResponse(rt.baseLogger, w, "followStatus return an error.", http.StatusInternalServerError, "Internal server error")
+		return
 	}
 
 }
