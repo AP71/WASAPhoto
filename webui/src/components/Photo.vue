@@ -199,7 +199,7 @@ export default {
 					<div class="text-bold text-success fs-6 pe-4">
 						{{ comment.data }}
 					</div>
-					<div v-if="comment.idUser==this.$profile.identifier || this.postDetails.identifier==this.$axios.identifier" class="text-decoration-underline text-success fs-6" @click="deleteComment(comment.id)">
+					<div v-if="((comment.idUser===this.$profile.identifier) || (this.postDetails.username===this.$profile.username))" class="text-decoration-underline text-success fs-6" @click="deleteComment(comment.id)">
 						Elimina
 					</div>
 				</div>
